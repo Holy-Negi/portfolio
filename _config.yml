@@ -1,0 +1,17 @@
+# GitHub Pages 設定ファイル
+# リポジトリ直下（index.md と同じ階層）に置く
+
+# テーマ：以下から1つ選んで有効化する（先頭の # を外す）
+theme: jekyll-theme-minimal
+# theme: jekyll-theme-cayman
+# theme: jekyll-theme-slate
+# theme: jekyll-theme-architect
+# theme: jekyll-theme-midnight
+
+# サイト全体のタイトル（テーマによってヘッダーに表示される）
+title: 【氏名】 — Portfolio
+description: 有機化学の研究現場から、バックエンド／化学DX領域へ
+
+# GitHubユーザー名（テーマによってはアバターやリンクの表示に使われる）
+github:
+  is_project_page: false
