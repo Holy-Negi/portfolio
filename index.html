@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ja" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Holyのポートフォリオ</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+
+    <header class="navbar">
+      <div class="container split">
+        <a class="navbar__brand" href="#basic">Portfolio — Holy</a>
+        <nav class="cluster" style="--gap: var(--space-1)">
+          <a class="navbar__link" href="#basic" aria-current="page">基本情報</a>
+          <a class="navbar__link" href="#history">沿革</a>
+          <a class="navbar__link" href="#certification">資格</a>
+          <a class="navbar__link" href="#projects">プロジェクト</a>
+          <a class="navbar__link" href="#skills">スキルセット</a>
+          <a class="navbar__link" href="#activities">課外活動</a>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle" />
+            <span class="switch__track"
+              ><span class="switch__thumb"></span
+            ></span>
+            <span>🌙</span>
+          </label>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section container" id="basic">
+        <div class="stack" style="--flow: var(--space-6)">
+          <div class="stack">
+            <span class="eyebrow">01 Basic Information</span>
+            <h2>基本情報</h2>
+            <h4>所属</h4>
+            <p>
+              北海道大学 大学院生命科学院 生命科学専攻 生命医薬科学コース
+              修士1年
+            </p>
+            <h4>研究領域</h4>
+            <p>有機化学・ケミカルバイオロジー</p>
+            <h4>興味・関心</h4>
+            <p>
+              有機合成など化学業界の研究現場の非効率を解決することに関心があります。
+              化学業界におけるバックエンド・インフラ領域・IT／DX領域を志望しています。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="history">
+        <div class="stack" style="--flow: var(--space-6)">
+          <div class="stack">
+            <span class="eyebrow">02 History</span>
+            <h2>沿革</h2>
+          </div>
+          <ul class="timeline" role="list">
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2022-04">2022年4月</time>
+              <div class="timeline-content">
+                <h5>
+                  北海道大学 総合理系入試にて入学<br />北大生協学生組織委員会
+                  入部
+                </h5>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2023-04">2023年4月</time>
+              <div class="timeline-content">
+                <h5>北海道大学 薬学部薬科学科 進学</h5>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2023-04">2024年5月</time>
+              <div class="timeline-content">
+                <h5>大学生協北海道ブロック 学生事務局 入部</h5>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2023-04">2024年10月</time>
+              <div class="timeline-content">
+                <h5>北海道大学 触媒科学研究所 分子触媒研究部門 浦口研究室 配属</h5>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2026-04">2026年4月</time>
+              <div class="timeline-content">
+                <h5>北海道大学 大学院生命科学院 進学</h5>
+              </div>
+            </li>
+            <li class="timeline-item">
+              <time class="timeline-date" datetime="2023-04">2026年4月</time>
+              <div class="timeline-content">
+                <h5>北大生協院生組織委員会 入部</h5>
+              </div>
+            </li>
+          </ul>
+      </section>
+
+      <section class="section container" id="certification">
+        <div class="stack" style="--flow: var(--space-6)">
+          <div class="stack">
+            <span class="eyebrow">02 Certification</span>
+            <h2>資格</h2>
+          </div>
+          <p>取得した資格、また取得予定の資格の一覧です。</p>
+
+          <div class="grid-auto" style="--min: 19rem">
+            <article class="card">
+              <h3 class="card__title">基本情報技術者試験</h3>
+              <p class="card__body">
+                Coming soon...
+                <!-- <b>取得年月日</b>:  -->
+              </p>
+            </article>
+   
+            <article class="card">
+              <h3 class="card__title">Coming soon...</h3>
+              <div class="card__body cluster" style="--gap: var(--space-2)">
+              </div>
+                <p class="card__body"></p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="projects">
+        <div class="stack" style="--flow: var(--space-6)">
+          <div class="stack">
+            <span class="eyebrow">03 projects</span>
+            <h2>プロジェクト</h2>
+          </div>
+          <p>これまでに個人で制作したプロジェクトです。</p>
+          <div class="grid-auto" style="--min: 19rem">
+            <article class="card">
+              <h3 class="card__title">電子実験ノート (ELN)</h3>
+              <p class="card__body">
+                化学反応の記録・管理を目的とした電子実験ノート (ELN; Electronic Lab Notebook) です。SMILESで化合物を入力するだけで、RDKitが分子量・LogP・InChIKeyなどの物性値を自動計算し、PostgreSQLに保存、FastAPI経由でReactフロントエンドに表示するという一連のパイプラインを備えています。ケモインフォマティクスおよびインフラ設計の実践的な学習を目的として、データベース設計からAPI実装、化学計算まで一通り自作しているプロジェクトです。
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="skills">
+        <div class="stack" style="--flow: var(--space-6)">
+          <div class="stack">
+            <span class="eyebrow">04 skills</span>
+            <h2>スキルセット</h2>
+          </div>
+          <p>私が持つスキルセットの習得状況です。</p>
+          <div class="grid-auto" style="--min: 9rem; --gap: var(--space-4)">
+            <article class="skill-card">
+              <img class="skill-card__icon" src="./images/python-logo.png" alt="" width="48" height="48">
+              <p class="skill-card__name">Python</p>
+              <div class="skill-meter" role="img" aria-label="習熟度 4/5">
+                <span class="skill-meter__dot" data-filled></span>
+                <span class="skill-meter__dot" data-filled></span>
+                <span class="skill-meter__dot" data-filled></span>
+                <span class="skill-meter__dot" data-filled></span>
+                <span class="skill-meter__dot"></span>
+              </div>
+              <p class="card__body">あああ</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="section container" id="activities">
+      <div class="stack" style="--flow: var(--space-6)">
+        <div class="stack">
+          <span class="eyebrow">05 Activities</span>
+          <h2>課外活動</h2>
+        </div>
+        <h4>北大生協 学生組織委員会</h4>
+        <h4>大学生協北海道ブロック 学生事務局</h4>
+        <h4>北大生協 院生組織委員会<h4>
+        
+    <!-- <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">項目</th>
+            <th scope="col">トークン</th>
+            <th scope="col" style="text-align: end">値</th>
+            <th scope="col">状態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">本文サイズ</th>
+            <td><code>--step-0</code></td>
+            <td data-numeric>16 – 18 px</td>
+            <td><span class="badge" data-tone="success">確定</span></td>
+          </tr>
+          <tr>
+            <th scope="row">角丸（大）</th>
+            <td><code>--radius-3</code></td>
+            <td data-numeric>16 px</td>
+            <td><span class="badge" data-tone="success">確定</span></td>
+          </tr>
+          <tr>
+            <th scope="row">節の余白</th>
+            <td><code>--space-section</code></td>
+            <td data-numeric>56 – 96 px</td>
+            <td><span class="badge" data-tone="warning">調整中</span></td>
+          </tr>
+          <tr>
+            <th scope="row">行長上限</th>
+            <td><code>--measure</code></td>
+            <td data-numeric>68 ch</td>
+            <td><span class="badge">既定</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+
+    <footer class="section container">
+      <hr />
+      <p class="fs--1 text-muted" style="margin-block-start: var(--space-5)">
+        Copyright © 2026, Holy All rights reserved.
+      </p>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+      const toggle = document.getElementById("theme-toggle");
+      const prefersDark = matchMedia("(prefers-color-scheme: dark)");
+      toggle.checked = prefersDark.matches;
+      root.dataset.theme = toggle.checked ? "dark" : "light";
+      toggle.addEventListener("change", () => {
+        root.dataset.theme = toggle.checked ? "dark" : "light";
+      });
+    </script>
+  </body>
+</html>
