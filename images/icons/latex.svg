@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="LaTeX">
+  <!-- LaTeX ロゴの特徴（A を上げ E を下げる）を文字で再現 -->
+  <g fill="#2C3E50" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-weight="700">
+    <text x="1" y="31">L</text>
+    <text x="10" y="24">A</text>
+    <text x="22" y="31">T</text>
+    <text x="31" y="36">E</text>
+    <text x="41" y="31">X</text>
+  </g>
+</svg>

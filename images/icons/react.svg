@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="React">
+  <!-- 原子核 -->
+  <circle cx="24" cy="24" r="4" fill="#61DAFB"/>
+  <!-- 3 本の電子軌道（同じ楕円を 60 度ずつ回転） -->
+  <g fill="none" stroke="#61DAFB" stroke-width="2">
+    <ellipse cx="24" cy="24" rx="20" ry="7.6"/>
+    <ellipse cx="24" cy="24" rx="20" ry="7.6" transform="rotate(60 24 24)"/>
+    <ellipse cx="24" cy="24" rx="20" ry="7.6" transform="rotate(120 24 24)"/>
+  </g>
+</svg>

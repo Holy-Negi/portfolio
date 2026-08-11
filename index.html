@@ -1,242 +1,779 @@
 <!doctype html>
-<html lang="ja" data-theme="light">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta
+      name="description"
+      content="Holy のポートフォリオ。北海道大学大学院で有機合成化学を専攻しながら、化学研究現場の課題をソフトウェアで解決することに取り組んでいます。"
+    />
     <title>Holyのポートフォリオ</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- 画面が描画される前にテーマを決めてしまうことで、
+         読み込み直後に白→黒とちらつく現象（FOUC）を防ぐ -->
+    <script>
+      (() => {
+        const saved = localStorage.getItem("theme");
+        const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme =
+          saved ?? (prefersDark ? "dark" : "light");
+      })();
+    </script>
   </head>
+
   <body>
     <a class="skip-link" href="#main">本文へ移動</a>
 
-    <header class="navbar">
-      <div class="container split">
-        <a class="navbar__brand" href="#basic">Portfolio — Holy</a>
-        <nav class="cluster" style="--gap: var(--space-1)">
-          <a class="navbar__link" href="#basic" aria-current="page">基本情報</a>
-          <a class="navbar__link" href="#history">沿革</a>
-          <a class="navbar__link" href="#certification">資格</a>
-          <a class="navbar__link" href="#projects">プロジェクト</a>
-          <a class="navbar__link" href="#skills">スキルセット</a>
-          <a class="navbar__link" href="#activities">課外活動</a>
-          <label class="switch">
-            <input type="checkbox" id="theme-toggle" />
-            <span class="switch__track"
-              ><span class="switch__thumb"></span
-            ></span>
-            <span>🌙</span>
-          </label>
+    <!-- ==================================================================
+         ヘッダー（上部に固定）
+         ================================================================== -->
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="site-header__brand" href="#top">HolyのPortfolio</a>
+
+        <nav class="site-nav" aria-label="セクション">
+          <a class="site-nav__link" href="#about">基本情報</a>
+          <a class="site-nav__link" href="#projects">プロジェクト</a>
+          <a class="site-nav__link" href="#skills">スキル</a>
+          <a class="site-nav__link" href="#certification">資格</a>
+          <a class="site-nav__link" href="#activities">課外活動</a>
+          <a class="site-nav__link" href="#history">略歴</a>
         </nav>
+
+        <label class="theme-toggle">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="theme-toggle__face" aria-hidden="true"></span>
+          <span class="visually-hidden">ダークモードを切り替える</span>
+        </label>
       </div>
     </header>
 
     <main id="main">
-      <section class="section container" id="basic">
-        <div class="stack" style="--flow: var(--space-6)">
-          <div class="stack">
-            <span class="eyebrow">01 Basic Information</span>
-            <h2>基本情報</h2>
-            <h4>所属</h4>
-            <p>
+      <!-- ================================================================
+           ヒーロー（最初に目に入る自己紹介）
+           ================================================================ -->
+      <section class="container hero" id="top">
+        <div class="hero__inner">
+          <div class="hero__id">
+            <h1 class="hero__title">Holy</h1>
+            <p class="hero__meta">
               北海道大学 大学院生命科学院 生命科学専攻 生命医薬科学コース
               修士1年
             </p>
-            <h4>研究領域</h4>
-            <p>有機化学・ケミカルバイオロジー</p>
-            <h4>興味・関心</h4>
-            <p>
-              有機合成など化学業界の研究現場の非効率を解決することに関心があります。
-              化学業界におけるバックエンド・インフラ領域・IT／DX領域を志望しています。
+          </div>
+
+          <!-- ----------------------------------------------------------
+               見出しの隣に置く構造式。枠や背景を持たせず、地の上に直接置く。
+               下に SMILES を密着させ、同じ化合物が2つの記法で書けることを示す。
+               描いているのはアセチルサリチル酸（アスピリン）。
+               ---------------------------------------------------------- -->
+          <figure class="hero__mol">
+            <!-- ベンゼン環の頂点座標は中心 (95,130)・半径 44 の正六角形。
+                 環の内側の円は芳香族性を表す記法。
+                 結合線は原子ラベルに重ならないよう手前で止めてある。 -->
+            <svg
+              class="mol"
+              viewBox="36 4 236 214"
+              role="img"
+              aria-label="アセチルサリチル酸（アスピリン）の構造式"
+            >
+              <!-- ベンゼン環 -->
+              <polygon
+                class="ring"
+                points="139,130 117,91.9 73,91.9 51,130 73,168.1 117,168.1"
+              />
+              <circle class="arom" cx="95" cy="130" r="27" />
+
+              <!-- カルボキシ基 -COOH -->
+              <line class="bond" x1="117" y1="91.9" x2="137" y2="57.3" />
+              <!-- C=O（二重結合は平行な2本線で描く） -->
+              <line class="bond" x1="139.2" y1="56.1" x2="124.7" y2="31.0" />
+              <line class="bond" x1="134.8" y1="58.6" x2="120.3" y2="33.5" />
+              <!-- C-OH -->
+              <line class="bond" x1="137" y1="57.3" x2="162" y2="57.3" />
+
+              <!-- アセトキシ基 -O-C(=O)-CH3 -->
+              <line class="bond" x1="139" y1="130" x2="166" y2="130" />
+              <line class="bond" x1="184.5" y1="139.5" x2="199" y2="164.6" />
+              <!-- C=O -->
+              <line class="bond" x1="201.2" y1="165.9" x2="186.7" y2="191.0" />
+              <line class="bond" x1="196.8" y1="163.4" x2="182.3" y2="188.5" />
+              <!-- C-CH3 -->
+              <line class="bond" x1="199" y1="164.6" x2="223" y2="164.6" />
+
+              <!-- 原子ラベル -->
+              <text
+                class="atom atom--o"
+                x="117"
+                y="22.7"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                O
+              </text>
+              <text
+                class="atom atom--o"
+                x="168"
+                y="57.3"
+                text-anchor="start"
+                dominant-baseline="middle"
+              >
+                OH
+              </text>
+              <text
+                class="atom atom--o"
+                x="176"
+                y="130"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                O
+              </text>
+              <text
+                class="atom atom--o"
+                x="179"
+                y="199.2"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                O
+              </text>
+              <text
+                class="atom"
+                x="228"
+                y="164.6"
+                text-anchor="start"
+                dominant-baseline="middle"
+              >
+                CH₃
+              </text>
+            </svg>
+
+            <figcaption class="hero__molcap">
+              <code class="hero__smiles">CC(=O)Oc1ccccc1C(=O)O</code>
+            </figcaption>
+          </figure>
+
+          <p class="hero__lead">
+            有機合成化学・ケミカルバイオロジーを専攻しながら、プログラミングやケモインフォマティクスにも興味があり、独学で学びながらそれらを活用できるような個人制作のプロジェクトにも並行して取り組んでいます。<br />
+            研究現場の非効率をデジタル化・データの構造化により解消することに関心があります。
+          </p>
+
+          <div class="hero__actions cluster">
+            <a
+              class="btn"
+              data-variant="solid"
+              href="https://github.com/Holy-Negi"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub</a
+            >
+            <a
+              class="btn"
+              data-variant="solid"
+              href="https://qiita.com/Holy_"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Qiita</a
+            >
+            <a class="btn" href="#projects">プロジェクトを見る</a>
+            <a class="btn" href="mailto:ken15hori81@gmail.com"
+              >ご連絡はこちら</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           01 基本情報
+           ================================================================ -->
+      <section class="container section" id="about">
+        <div class="section-head">
+          <p class="section-head__label">01 / About</p>
+          <h2 class="section-head__title">基本情報</h2>
+        </div>
+
+        <dl class="def-list">
+          <div>
+            <dt>所属</dt>
+            <dd>
+              北海道大学 大学院生命科学院 生命科学専攻 生命医薬科学コース
+              修士1年<br />
+              <span class="text-muted fs--1"
+                >触媒科学研究所 分子触媒研究部門 浦口研究室</span
+              >
+            </dd>
+          </div>
+          <div>
+            <dt>研究領域</dt>
+            <dd>
+              有機化学（有機合成化学・有機反応開発） / ケミカルバイオロジー
+            </dd>
+          </div>
+          <div>
+            <dt>興味・関心</dt>
+            <dd>
+              有機合成をはじめとする化学研究の現場に残る非効率を、ソフトウェアの力で解決することに関心があります。
+              特に実験記録の電子化や実験データの構造化は、研究の再現性と速度を直接的に高める領域だと考えています。
+            </dd>
+          </div>
+          <div>
+            <dt>志望領域</dt>
+            <dd>化学業界における IT／DX 領域、バックエンド・インフラ領域</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- ================================================================
+           02 プロジェクト
+           ================================================================ -->
+      <section class="container section" id="projects">
+        <div class="section-head">
+          <p class="section-head__label">02 / Projects</p>
+          <h2 class="section-head__title">プロジェクト</h2>
+          <p class="section-head__note">
+            個人で企画・設計・実装したプロジェクトです。
+          </p>
+        </div>
+
+        <div class="grid-auto" style="--min: 22rem; --gap: var(--sp-4)">
+          <article class="card">
+            <div class="card__head">
+              <h3 class="card__title">電子実験ノート（ELN）</h3>
+              <span class="tag">個人開発 / 2026〜</span>
+            </div>
+
+            <p class="card__body">
+              化学反応の記録・管理を目的とした<strong>電子実験ノート</strong>（ELN;
+              Electronic Lab Notebook）です。SMILES
+              記法で化合物を入力するだけで、RDKit
+              が自動計算した分子量・LogP・InChIKey などの物性値を PostgreSQL
+              に保存し、FastAPI 経由で React
+              フロントエンドに表示する、という一連のパイプラインを備えています。
             </p>
-          </div>
+            <p class="card__body">
+              ケモインフォマティクスとインフラ設計の実践的な習得を目的として、データベース設計・API
+              実装・化学計算までを一通り自作しています。
+            </p>
+
+            <div class="card__body cluster" style="--gap: var(--sp-2)">
+              <span class="tag">Python</span>
+              <span class="tag">FastAPI</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">React</span>
+              <span class="tag">RDKit</span>
+            </div>
+
+            <div class="card__footer">
+              <a
+                class="link-inline"
+                href="https://github.com/Holy-Negi/synth-eln"
+                target="_blank"
+                rel="noopener noreferrer"
+                >github.com/Holy-Negi/synth-eln</a
+              >
+            </div>
+          </article>
         </div>
       </section>
 
-      <section class="section container" id="history">
-        <div class="stack" style="--flow: var(--space-6)">
-          <div class="stack">
-            <span class="eyebrow">02 History</span>
-            <h2>沿革</h2>
-          </div>
-          <ul class="timeline" role="list">
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2022-04">2022年4月</time>
-              <div class="timeline-content">
-                <h5>
-                  北海道大学 総合理系入試にて入学<br />北大生協学生組織委員会
-                  入部
-                </h5>
-              </div>
-            </li>
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2023-04">2023年4月</time>
-              <div class="timeline-content">
-                <h5>北海道大学 薬学部薬科学科 進学</h5>
-              </div>
-            </li>
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2023-04">2024年5月</time>
-              <div class="timeline-content">
-                <h5>大学生協北海道ブロック 学生事務局 入部</h5>
-              </div>
-            </li>
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2023-04">2024年10月</time>
-              <div class="timeline-content">
-                <h5>北海道大学 触媒科学研究所 分子触媒研究部門 浦口研究室 配属</h5>
-              </div>
-            </li>
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2026-04">2026年4月</time>
-              <div class="timeline-content">
-                <h5>北海道大学 大学院生命科学院 進学</h5>
-              </div>
-            </li>
-            <li class="timeline-item">
-              <time class="timeline-date" datetime="2023-04">2026年4月</time>
-              <div class="timeline-content">
-                <h5>北大生協院生組織委員会 入部</h5>
-              </div>
-            </li>
-          </ul>
-      </section>
+      <!-- ================================================================
+           03 スキルセット
+           カテゴリごとにグループ化し、各スキルに使用開始年・習熟度・使用文脈を記載
+           ================================================================ -->
+      <section class="container section" id="skills">
+        <div class="section-head">
+          <p class="section-head__label">03 / Skills</p>
+          <h2 class="section-head__title">スキルセット</h2>
+          <p class="section-head__note">
+            現時点で扱える技術と、その習得状況です。習熟度は下記の基準で自己評価しています。
+          </p>
 
-      <section class="section container" id="certification">
-        <div class="stack" style="--flow: var(--space-6)">
-          <div class="stack">
-            <span class="eyebrow">02 Certification</span>
-            <h2>資格</h2>
-          </div>
-          <p>取得した資格、また取得予定の資格の一覧です。</p>
-
-          <div class="grid-auto" style="--min: 19rem">
-            <article class="card">
-              <h3 class="card__title">基本情報技術者試験</h3>
-              <p class="card__body">
-                Coming soon...
-                <!-- <b>取得年月日</b>:  -->
-              </p>
-            </article>
-   
-            <article class="card">
-              <h3 class="card__title">Coming soon...</h3>
-              <div class="card__body cluster" style="--gap: var(--space-2)">
+          <!-- 習熟度の基準。数字だけを並べるより、基準を明示したほうが信頼性が高い -->
+          <div class="level-legend">
+            <strong class="text-ink">習熟度の基準</strong>
+            <dl>
+              <div>
+                <dt class="level" role="img" aria-label="レベル1">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </dt>
+                <dd>学習を始めたばかり</dd>
               </div>
-                <p class="card__body"></p>
-            </article>
+              <div>
+                <dt class="level" role="img" aria-label="レベル2">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </dt>
+                <dd>基本的な概念を理解している</dd>
+              </div>
+              <div>
+                <dt class="level" role="img" aria-label="レベル3">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </dt>
+                <dd>基本を理解し、実装・運用の経験がある</dd>
+              </div>
+              <div>
+                <dt class="level" role="img" aria-label="レベル4">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                </dt>
+                <dd>主体的に設計・実装できる</dd>
+              </div>
+            </dl>
           </div>
         </div>
-      </section>
 
-      <section class="section container" id="projects">
-        <div class="stack" style="--flow: var(--space-6)">
-          <div class="stack">
-            <span class="eyebrow">03 projects</span>
-            <h2>プロジェクト</h2>
+        <!-- --- カテゴリ1：言語 --------------------------------------- -->
+        <div class="skill-group">
+          <div class="skill-group__head">
+            <h3 class="skill-group__title">言語</h3>
+            <span class="skill-group__en">Languages</span>
           </div>
-          <p>これまでに個人で制作したプロジェクトです。</p>
-          <div class="grid-auto" style="--min: 19rem">
-            <article class="card">
-              <h3 class="card__title">電子実験ノート (ELN)</h3>
-              <p class="card__body">
-                化学反応の記録・管理を目的とした電子実験ノート (ELN; Electronic Lab Notebook) です。SMILESで化合物を入力するだけで、RDKitが分子量・LogP・InChIKeyなどの物性値を自動計算し、PostgreSQLに保存、FastAPI経由でReactフロントエンドに表示するという一連のパイプラインを備えています。ケモインフォマティクスおよびインフラ設計の実践的な学習を目的として、データベース設計からAPI実装、化学計算まで一通り自作しているプロジェクトです。
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
 
-      <section class="section container" id="skills">
-        <div class="stack" style="--flow: var(--space-6)">
-          <div class="stack">
-            <span class="eyebrow">04 skills</span>
-            <h2>スキルセット</h2>
-          </div>
-          <p>私が持つスキルセットの習得状況です。</p>
-          <div class="grid-auto" style="--min: 9rem; --gap: var(--space-4)">
+          <div class="grid-auto" style="--min: 20rem">
             <article class="skill-card">
-              <img class="skill-card__icon" src="./images/python-logo.png" alt="" width="48" height="48">
-              <p class="skill-card__name">Python</p>
-              <div class="skill-meter" role="img" aria-label="習熟度 4/5">
-                <span class="skill-meter__dot" data-filled></span>
-                <span class="skill-meter__dot" data-filled></span>
-                <span class="skill-meter__dot" data-filled></span>
-                <span class="skill-meter__dot" data-filled></span>
-                <span class="skill-meter__dot"></span>
+              <img
+                class="skill-card__icon"
+                src="./images/icons/python.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">Python</span>
+                <span class="skill-card__since">2022年〜</span>
+                <span class="level" role="img" aria-label="習熟度 3 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
               </div>
-              <p class="card__body">あああ</p>
+              <p class="skill-card__desc">
+                大学1年の情報の授業で学習を開始しました。
+                2026年には東京大学松尾研究室が主催する<a
+                  href="https://matsuo-institute.com/seminar/gci-2026s/"
+                  >GCI講座</a
+                >を受講し、データサイエンス・機械学習の学習にも使用しました。
+                同年に開始した個人開発プロジェクトでは、バックエンドの実装言語として使用しています。
+              </p>
+              <p class="skill-card__note">
+                基本的な概念・構文を理解しており、実装経験もあります。
+              </p>
+            </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/web.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">HTML / CSS / JavaScript</span>
+                <span class="skill-card__since">2025年〜</span>
+                <span class="level" role="img" aria-label="習熟度 2 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                Web 開発が必要になったプロジェクトで使用を開始しました。
+                このポートフォリオサイトも、これらの技術で制作しています。
+              </p>
+              <p class="skill-card__note">
+                基本的な概念は理解していますが、実装経験が少なく習熟度は高くありません。
+              </p>
             </article>
           </div>
         </div>
+
+        <!-- --- カテゴリ2：フレームワーク・データベース ----------------- -->
+        <div class="skill-group">
+          <div class="skill-group__head">
+            <h3 class="skill-group__title">フレームワーク・データベース</h3>
+            <span class="skill-group__en">Framework &amp; Database</span>
+          </div>
+
+          <div class="grid-auto" style="--min: 20rem">
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/react.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">React</span>
+                <span class="skill-card__since">2026年〜</span>
+                <span class="level" role="img" aria-label="習熟度 2 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                2026年に開始した個人開発プロジェクトのフロントエンドとして採用し、
+                画面のコンポーネント分割と API 連携部分を実装しました。
+              </p>
+              <p class="skill-card__note">
+                基本的な概念は理解していますが、実装経験が少なく習熟度は高くありません。
+              </p>
+            </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/postgresql.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">PostgreSQL</span>
+                <span class="skill-card__since">2026年〜</span>
+                <span class="level" role="img" aria-label="習熟度 2 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                個人開発プロジェクトのバックエンドで使用しました。化合物とその物性値を扱うための
+                テーブル設計とクエリの実装を行いました。SQLの基本的な概念や構文は理解しています。
+              </p>
+            </article>
+          </div>
+        </div>
+
+        <!-- --- カテゴリ3：開発環境・ツール ---------------------------- -->
+        <div class="skill-group">
+          <div class="skill-group__head">
+            <h3 class="skill-group__title">開発環境・ツール</h3>
+            <span class="skill-group__en">Environment &amp; Tools</span>
+          </div>
+
+          <div class="grid-auto" style="--min: 20rem">
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/linux.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">Linux</span>
+                <span class="skill-card__since">2025年〜</span>
+                <span class="level" role="img" aria-label="習熟度 3 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                基本的な Bash
+                コマンドによる操作が可能です。計算化学プログラムを動かすための
+                計算用サーバーを Linux で自ら構築し、運用しています。
+              </p>
+            </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/vscode.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">Visual Studio Code</span>
+                <span class="skill-card__since">2022年〜</span>
+                <span class="level" role="img" aria-label="習熟度 4 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                日常的なコーディング・開発の主要な環境として使用しています。
+              </p>
+            </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/latex.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">LaTeX</span>
+                <span class="skill-card__since">2022年〜</span>
+                <span class="level" role="img" aria-label="習熟度 4 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                レポートや研究資料など、日常的な文書作成に使用しています。
+              </p>
+            </article>
+          </div>
+        </div>
+
+        <!-- --- カテゴリ4：専門ソフトウェア ---------------------------- -->
+        <div class="skill-group">
+          <div class="skill-group__head">
+            <h3 class="skill-group__title">専門ソフトウェア</h3>
+            <span class="skill-group__en">Scientific Software</span>
+          </div>
+
+          <div class="grid-auto" style="--min: 20rem">
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/gamess.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">GAMESS</span>
+                <span class="skill-card__since">2026年〜</span>
+                <span class="level" role="img" aria-label="習熟度 1 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                計算化学の学習と並行して、量子化学計算プログラムである GAMESS
+                を使用しています。
+              </p>
+              <p class="skill-card__note">学習を始めたばかりです。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           04 資格
+           ================================================================ -->
+      <section class="container section" id="certification">
+        <div class="section-head">
+          <p class="section-head__label">04 / Certification</p>
+          <h2 class="section-head__title">資格</h2>
+          <p class="section-head__note">取得済み、および取得予定の資格です。</p>
+        </div>
+
+        <div class="grid-auto" style="--min: 18rem">
+          <article class="card">
+            <div class="card__head">
+              <h3 class="card__title">基本情報技術者試験</h3>
+              <span class="status" data-state="planned">取得予定</span>
+            </div>
+            <p class="card__body">
+              IT の基礎知識を体系的に整理するため、受験を予定しています。
+              <!-- 取得後はこの行を「取得年月：2026年◯月」などに書き換えてください -->
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           05 課外活動
+           ================================================================ -->
+      <section class="container section" id="activities">
+        <div class="section-head">
+          <p class="section-head__label">05 / Activities</p>
+          <h2 class="section-head__title">課外活動</h2>
+          <p class="section-head__note">
+            学業・研究以外に継続して取り組んできた活動です。
+          </p>
+        </div>
+
+        <div>
+          <article class="activity">
+            <div class="activity__head">
+              <h3 class="activity__name">
+                北海道大学生活協同組合 学生組織委員会
+              </h3>
+              <span class="activity__period">2022年4月〜</span>
+            </div>
+            <p class="activity__body">
+              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
+              活動内容をここに記載します。
+            </p>
+          </article>
+
+          <article class="activity">
+            <div class="activity__head">
+              <h3 class="activity__name">大学生協北海道ブロック 学生事務局</h3>
+              <span class="activity__period">2024年5月〜</span>
+            </div>
+            <p class="activity__body">
+              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
+              活動内容をここに記載します。
+            </p>
+          </article>
+
+          <article class="activity">
+            <div class="activity__head">
+              <h3 class="activity__name">
+                北海道大学生活協同組合 院生組織委員会
+              </h3>
+              <span class="activity__period">2026年4月〜</span>
+            </div>
+            <p class="activity__body">
+              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
+              活動内容をここに記載します。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ================================================================
+           06 略歴
+           ================================================================ -->
+      <section class="container section" id="history">
+        <div class="section-head">
+          <p class="section-head__label">06 / History</p>
+          <h2 class="section-head__title">略歴</h2>
+        </div>
+
+        <ol class="timeline" role="list">
+          <li class="timeline__item">
+            <time class="timeline__date" datetime="2022-04">2022年4月</time>
+            <p class="timeline__text">
+              北海道大学 総合理系入試にて入学<br />
+              北大生協 学生組織委員会 入部
+            </p>
+          </li>
+          <li class="timeline__item">
+            <time class="timeline__date" datetime="2023-04">2023年4月</time>
+            <p class="timeline__text">北海道大学 薬学部 薬科学科 進学</p>
+          </li>
+          <li class="timeline__item">
+            <time class="timeline__date" datetime="2024-05">2024年5月</time>
+            <p class="timeline__text">大学生協北海道ブロック 学生事務局 入部</p>
+          </li>
+          <li class="timeline__item">
+            <time class="timeline__date" datetime="2024-10">2024年10月</time>
+            <p class="timeline__text">
+              北海道大学 触媒科学研究所 分子触媒研究部門 浦口研究室 配属
+            </p>
+          </li>
+          <li class="timeline__item">
+            <time class="timeline__date" datetime="2026-04">2026年4月</time>
+            <p class="timeline__text">
+              北海道大学 大学院生命科学院 進学<br />
+              北大生協 院生組織委員会 入部
+            </p>
+          </li>
+        </ol>
       </section>
     </main>
 
-    <section class="section container" id="activities">
-      <div class="stack" style="--flow: var(--space-6)">
-        <div class="stack">
-          <span class="eyebrow">05 Activities</span>
-          <h2>課外活動</h2>
-        </div>
-        <h4>北大生協 学生組織委員会</h4>
-        <h4>大学生協北海道ブロック 学生事務局</h4>
-        <h4>北大生協 院生組織委員会<h4>
-        
-    <!-- <div class="table-wrap">
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">項目</th>
-            <th scope="col">トークン</th>
-            <th scope="col" style="text-align: end">値</th>
-            <th scope="col">状態</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">本文サイズ</th>
-            <td><code>--step-0</code></td>
-            <td data-numeric>16 – 18 px</td>
-            <td><span class="badge" data-tone="success">確定</span></td>
-          </tr>
-          <tr>
-            <th scope="row">角丸（大）</th>
-            <td><code>--radius-3</code></td>
-            <td data-numeric>16 px</td>
-            <td><span class="badge" data-tone="success">確定</span></td>
-          </tr>
-          <tr>
-            <th scope="row">節の余白</th>
-            <td><code>--space-section</code></td>
-            <td data-numeric>56 – 96 px</td>
-            <td><span class="badge" data-tone="warning">調整中</span></td>
-          </tr>
-          <tr>
-            <th scope="row">行長上限</th>
-            <td><code>--measure</code></td>
-            <td data-numeric>68 ch</td>
-            <td><span class="badge">既定</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
-
-    <footer class="section container">
-      <hr />
-      <p class="fs--1 text-muted" style="margin-block-start: var(--space-5)">
-        Copyright © 2026, Holy All rights reserved.
-      </p>
+    <!-- ==================================================================
+         フッター
+         ================================================================== -->
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <p>&copy; 2026 Holy. All rights reserved.</p>
+        <a
+          class="link-inline"
+          href="https://github.com/Holy-Negi"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </div>
     </footer>
 
     <script>
+      /* ------------------------------------------------------------------
+         1. テーマ切替
+         head 側のスクリプトが決めた現在のテーマに、トグルの状態を合わせる。
+         切り替えた結果は localStorage に保存し、次回訪問時も維持する。
+         ------------------------------------------------------------------ */
       const root = document.documentElement;
       const toggle = document.getElementById("theme-toggle");
-      const prefersDark = matchMedia("(prefers-color-scheme: dark)");
-      toggle.checked = prefersDark.matches;
-      root.dataset.theme = toggle.checked ? "dark" : "light";
+
+      toggle.checked = root.dataset.theme === "dark";
       toggle.addEventListener("change", () => {
-        root.dataset.theme = toggle.checked ? "dark" : "light";
+        const theme = toggle.checked ? "dark" : "light";
+        root.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
       });
+
+      /* ------------------------------------------------------------------
+         2. 現在地のハイライト
+         IntersectionObserver は「要素が画面内に入った／出た」を監視する API。
+         スクロールのたびに位置を計算するより軽く、動作も滑らか。
+
+         rootMargin の上下を大きく削ることで、画面の上寄りの帯だけを
+         「今読んでいる領域」とみなしている。
+         ------------------------------------------------------------------ */
+      const navLinks = document.querySelectorAll(".site-nav__link");
+      const sections = [...navLinks].map((link) =>
+        document.querySelector(link.getAttribute("href")),
+      );
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach((link) => {
+              // aria-current="page" はスクリーンリーダーにも現在地を伝える正式な属性。
+              // CSS の [aria-current="page"] セレクタもこの属性を見て色を変えている。
+              if (link.getAttribute("href") === `#${entry.target.id}`) {
+                link.setAttribute("aria-current", "page");
+              } else {
+                link.removeAttribute("aria-current");
+              }
+            });
+          });
+        },
+        { rootMargin: "-20% 0px -70% 0px" },
+      );
+
+      sections.forEach((section) => section && observer.observe(section));
     </script>
   </body>
 </html>

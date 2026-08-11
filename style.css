@@ -1,720 +1,1187 @@
+/* ==========================================================================
+   style.css — 就活用ポートフォリオ
+
+   ■ デザイン方針：「知的・堅実トーン」
+     - 紙のようなオフホワイトを地に、濃紺インクの文字。彩度は極力抑える
+     - 影やグラデーションはほぼ使わず、細い罫線と余白で構造を作る
+     - 派手さより「読みやすさ・情報の整理」を優先（採用担当が短時間で読む前提）
+
+   ■ カスケードレイヤー（@layer）
+     下に書いたレイヤーほど優先度が高い。宣言順をここで先に固定しておくと、
+     ファイル内のどこに書いても優先順位が予測できる（詳細度の勝負を避けられる）。
+   ========================================================================== */
 @layer reset, tokens, base, layout, components, utilities;
 
-/* --------------------------------------------------------------------------
-  1. reset — ブラウザごとに異なる初期値を揃える
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   1. reset — ブラウザ間の初期値の差を消す
+   ========================================================================== */
 @layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-
-  * { margin: 0; }
-
-  html {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    scrollbar-gutter: stable;
+  /* 幅の計算に border と padding を含める（レイアウト崩れの定番対策） */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 
-  body { min-block-size: 100svb; -webkit-font-smoothing: antialiased; }
+  /* 既定の余白を全消去し、余白は必要な箇所だけ明示的に付ける方針にする */
+  * {
+    margin: 0;
+  }
 
-  img, picture, svg, video, canvas {
+  html {
+    -webkit-text-size-adjust: 100%; /* スマホ横向き時の勝手な文字拡大を無効化 */
+    text-size-adjust: 100%;
+    scrollbar-gutter: stable; /* スクロールバー出現による横ズレを防ぐ */
+    scroll-behavior: smooth; /* ナビのアンカーリンクを滑らかに移動 */
+  }
+
+  body {
+    min-block-size: 100svb;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* メディア要素：行揃えのズレを防ぐため block 化し、はみ出しも止める */
+  img,
+  picture,
+  svg,
+  video,
+  canvas {
     display: block;
     max-inline-size: 100%;
     block-size: auto;
   }
 
-  input, button, textarea, select { font: inherit; color: inherit; }
+  /* フォーム部品は既定でフォントを継承しないため、明示的に継承させる */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
 
-  p, h1, h2, h3, h4, li, figcaption { text-wrap: pretty; overflow-wrap: break-word; }
-  h1, h2, h3 { text-wrap: balance; }
+  /* 折り返し品質：pretty＝行末の孤立語を防ぐ、balance＝見出しの行を均等配分 */
+  p,
+  li,
+  dd,
+  figcaption {
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
 
-  ul[role="list"], ol[role="list"] { list-style: none; padding-inline-start: 0; }
+  /* role="list" を付けたリストは装飾を消す（読み上げ上はリストのまま保つ） */
+  ul[role="list"],
+  ol[role="list"] {
+    list-style: none;
+    padding-inline-start: 0;
+  }
 
-  :target { scroll-margin-block-start: var(--space-7, 3rem); }
+  /* 固定ヘッダーの下にアンカー先が潜り込まないよう余白を確保 */
+  :target {
+    scroll-margin-block-start: 6rem;
+  }
 
+  /* 「視差効果を減らす」設定のユーザーにはアニメーションを事実上止める */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      /* 遅延も消す。これがないと「動かないが、数秒待たないと現れない」状態になる */
+      animation-delay: 0s !important;
       transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+      transition-delay: 0s !important;
     }
   }
 }
 
-/* --------------------------------------------------------------------------
-  2. tokens — カスタムプロパティ (変数) を定義
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   2. tokens — デザインの「原材料」を変数として一括定義
+   ここの値を変えるだけで、配色・余白・文字サイズが全体で連動して変わる。
+   ========================================================================== */
 @layer tokens {
   :root {
+    /* OS のライト／ダーク設定に追従する。light-dark() が機能する前提条件 */
     color-scheme: light dark;
 
-    /* --- 色相の軸（この3つを変えるとテーマ全体が変わる） --- */
-    --hue-neutral: 265;
-    --hue-brand: 275;
-    --hue-accent: 196;
+    /* --- 色相の軸：この2つを変えるとサイト全体の色味が変わる ------------- */
+    --hue-ink: 262; /* 地・文字・罫線などの基調（わずかに青みのある無彩色） */
+    --hue-accent: 258; /* アクセント（濃紺〜藍） */
 
-    /* --- 面と文字 --- */
-    --surface-base:   light-dark(oklch(98.5% 0.004 var(--hue-neutral)), oklch(18% 0.014 var(--hue-neutral)));
-    --surface-raised: light-dark(oklch(100%  0     0                 ), oklch(22.5% 0.016 var(--hue-neutral)));
-    --surface-sunken: light-dark(oklch(96%   0.007 var(--hue-neutral)), oklch(14.5% 0.012 var(--hue-neutral)));
-    --surface-inverse:light-dark(oklch(24%   0.02  var(--hue-neutral)), oklch(95% 0.008 var(--hue-neutral)));
+    /* --- 地の色：light-dark(ライト時, ダーク時) で自動的に切り替わる ------
+       oklch(明度% 彩度 色相) 形式。明度だけを段階的に動かして統一感を出す。 */
+    --bg: light-dark(
+      oklch(98.4% 0.003 var(--hue-ink)),
+      oklch(15.5% 0.012 var(--hue-ink))
+    ); /* ページの地 */
+    --surface: light-dark(
+      oklch(100% 0 0),
+      oklch(19.5% 0.014 var(--hue-ink))
+    ); /* カードなど手前の面 */
+    --surface-2: light-dark(
+      oklch(96.6% 0.005 var(--hue-ink)),
+      oklch(23% 0.014 var(--hue-ink))
+    ); /* 一段沈んだ面 */
 
-    --text-strong: light-dark(oklch(22% 0.022 var(--hue-neutral)), oklch(96% 0.006 var(--hue-neutral)));
-    --text-body:   light-dark(oklch(35% 0.020 var(--hue-neutral)), oklch(87% 0.010 var(--hue-neutral)));
-    --text-muted:  light-dark(oklch(52% 0.018 var(--hue-neutral)), oklch(71% 0.014 var(--hue-neutral)));
-    --text-inverse:light-dark(oklch(98% 0.004 var(--hue-neutral)), oklch(20% 0.014 var(--hue-neutral)));
+    /* --- 文字色：役割ごとに3段階。強→本文→補足 ------------------------- */
+    --ink: light-dark(
+      oklch(21% 0.024 var(--hue-ink)),
+      oklch(96% 0.005 var(--hue-ink))
+    ); /* 見出し・強調 */
+    --ink-2: light-dark(
+      oklch(38% 0.018 var(--hue-ink)),
+      oklch(84% 0.01 var(--hue-ink))
+    ); /* 本文 */
+    --ink-3: light-dark(
+      oklch(54% 0.014 var(--hue-ink)),
+      oklch(67% 0.012 var(--hue-ink))
+    ); /* 補足・ラベル */
 
-    --border:        light-dark(oklch(90% 0.010 var(--hue-neutral)), oklch(31% 0.018 var(--hue-neutral)));
-    --border-strong: light-dark(oklch(80% 0.016 var(--hue-neutral)), oklch(42% 0.022 var(--hue-neutral)));
+    /* --- 罫線：このデザインの主役。太さではなく濃さで階層を作る --------- */
+    --line: light-dark(
+      oklch(91.5% 0.006 var(--hue-ink)),
+      oklch(28% 0.014 var(--hue-ink))
+    ); /* 通常 */
+    --line-2: light-dark(
+      oklch(84% 0.01 var(--hue-ink)),
+      oklch(37% 0.018 var(--hue-ink))
+    ); /* 強調 */
 
-    /* --- ブランド・アクセント --- */
-    --brand:       light-dark(oklch(52% 0.19 var(--hue-brand)), oklch(72% 0.15 var(--hue-brand)));
-    --brand-hover: light-dark(oklch(46% 0.20 var(--hue-brand)), oklch(78% 0.14 var(--hue-brand)));
-    --brand-soft:  light-dark(oklch(95% 0.035 var(--hue-brand)), oklch(30% 0.06 var(--hue-brand)));
-    --brand-text:  light-dark(oklch(42% 0.19 var(--hue-brand)), oklch(85% 0.11 var(--hue-brand)));
-    --on-brand:    light-dark(oklch(99% 0.005 var(--hue-brand)), oklch(17% 0.03 var(--hue-brand)));
+    /* --- アクセント（濃紺）：リンク・強調・メーターに使う --------------- */
+    --accent: light-dark(
+      oklch(44% 0.135 var(--hue-accent)),
+      oklch(78% 0.115 var(--hue-accent))
+    );
+    --accent-hover: light-dark(
+      oklch(36% 0.145 var(--hue-accent)),
+      oklch(86% 0.095 var(--hue-accent))
+    );
+    --accent-soft: light-dark(
+      oklch(95% 0.028 var(--hue-accent)),
+      oklch(27% 0.055 var(--hue-accent))
+    ); /* 淡い背景用 */
+    --on-accent: light-dark(
+      oklch(99% 0.004 var(--hue-accent)),
+      oklch(16% 0.03 var(--hue-accent))
+    ); /* アクセント面の上の文字 */
 
-    --accent:      light-dark(oklch(58% 0.13 var(--hue-accent)), oklch(75% 0.11 var(--hue-accent)));
-    --accent-soft: light-dark(oklch(95% 0.03 var(--hue-accent)), oklch(29% 0.05 var(--hue-accent)));
+    /* --- 状態色：資格の取得状況などを示す ------------------------------ */
+    --ok: light-dark(oklch(45% 0.12 155), oklch(76% 0.12 155)); /* 取得済み */
+    --ok-soft: light-dark(oklch(95% 0.04 155), oklch(26% 0.05 155));
+    --wip: light-dark(
+      oklch(50% 0.11 70),
+      oklch(80% 0.11 70)
+    ); /* 予定・学習中 */
+    --wip-soft: light-dark(oklch(96% 0.04 70), oklch(27% 0.05 70));
 
-    /* --- 状態色（色相だけ差し替えた同構造） --- */
-    --success:      light-dark(oklch(52% 0.14 152), oklch(74% 0.13 152));
-    --success-soft: light-dark(oklch(95% 0.04 152), oklch(28% 0.05 152));
-    --warning:      light-dark(oklch(58% 0.14  74), oklch(80% 0.13  74));
-    --warning-soft: light-dark(oklch(96% 0.05  74), oklch(29% 0.05  74));
-    --danger:       light-dark(oklch(53% 0.19  26), oklch(72% 0.16  26));
-    --danger-soft:  light-dark(oklch(96% 0.03  26), oklch(29% 0.06  26));
+    /* --- 書体 ---------------------------------------------------------
+       和文は環境にあるゴシックを順に探す。欧文を先に書くことで、
+       英数字は欧文フォント・日本語は和文フォントが使われる。 */
+    --font-sans:
+      "Inter", "Helvetica Neue", "Segoe UI", "Hiragino Kaku Gothic ProN",
+      "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
+    /* 等幅：年号・セクション番号・技術名など「データ的な文字」に使い、本文と質感を分ける */
+    --font-mono:
+      ui-monospace, "SF Mono", "JetBrains Mono", "Consolas", "Noto Sans Mono",
+      monospace;
 
-    /* --- タイポグラフィ --- */
-    --font-body: "Inter", "Avenir Next", "Segoe UI", "Hiragino Sans",
-                "Noto Sans JP", system-ui, sans-serif;
-    --font-display: var(--font-body);
-    --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", "Menlo",
-                "Consolas", "Noto Sans Mono", monospace;
+    /* --- 文字サイズ：clamp(最小, 可変, 最大) ---------------------------
+       画面幅 320px→1280px の間で滑らかに拡大する。step-0 が本文の基準。
+       負の番号は本文より小さい文字、正の番号は見出し。 */
+    --text--2: clamp(0.72rem, 0.705rem + 0.075vw, 0.765rem);
+    --text--1: clamp(0.83rem, 0.807rem + 0.117vw, 0.9rem);
+    --text-0: clamp(0.95rem, 0.925rem + 0.125vw, 1.025rem);
+    --text-1: clamp(1.13rem, 1.083rem + 0.233vw, 1.27rem);
+    --text-2: clamp(1.36rem, 1.273rem + 0.433vw, 1.62rem);
+    --text-3: clamp(1.62rem, 1.473rem + 0.733vw, 2.06rem);
+    --text-4: clamp(2rem, 1.72rem + 1.4vw, 2.84rem);
 
-    /* clamp: a = f_min − (f_max−f_min)/3 , k = 5/3·(f_max−f_min) [320px→1280px] */
-    --step--2: clamp(0.694rem, 0.685rem + 0.043vw, 0.720rem);
-    --step--1: clamp(0.833rem, 0.811rem + 0.111vw, 0.900rem);
-    --step-0:  clamp(1.000rem, 0.958rem + 0.208vw, 1.125rem);
-    --step-1:  clamp(1.200rem, 1.131rem + 0.343vw, 1.406rem);
-    --step-2:  clamp(1.440rem, 1.334rem + 0.530vw, 1.758rem);
-    --step-3:  clamp(1.728rem, 1.572rem + 0.782vw, 2.197rem);
-    --step-4:  clamp(2.074rem, 1.850rem + 1.120vw, 2.746rem);
-    --step-5:  clamp(2.488rem, 2.173rem + 1.575vw, 3.433rem);
+    /* --- 行間・字間 ---------------------------------------------------- */
+    --leading-tight: 1.2; /* 大見出し */
+    --leading-snug: 1.45; /* 小見出し・カード内 */
+    --leading-normal: 1.85; /* 本文（和文は広めが読みやすい） */
+    --tracking-tight: -0.02em; /* 大きな欧文見出しは少し詰める */
+    --tracking-wide: 0.14em; /* 小さい大文字ラベルは大きく開く */
 
-    --leading-tight: 1.15;
-    --leading-snug: 1.4;
-    --leading-normal: 1.75;
-    --tracking-tight: -0.022em;
-    --tracking-label: 0.09em;
+    /* --- 余白：0.25rem(4px) 基準のスケール ------------------------------ */
+    --sp-1: 0.25rem;
+    --sp-2: 0.5rem;
+    --sp-3: 0.75rem;
+    --sp-4: 1rem;
+    --sp-5: 1.5rem;
+    --sp-6: 2rem;
+    --sp-7: 3rem;
+    --sp-8: 4.5rem;
+    /* セクション間の余白だけは画面幅に応じて可変にする */
+    --sp-section: clamp(3rem, 2.167rem + 4.167vw, 5.5rem);
 
-    /* --- 余白（4px 基準の等比＋線形の混合スケール） --- */
-    --space-1: 0.25rem;
-    --space-2: 0.5rem;
-    --space-3: 0.75rem;
-    --space-4: 1rem;
-    --space-5: 1.5rem;
-    --space-6: 2rem;
-    --space-7: 3rem;
-    --space-8: 4rem;
-    --space-section: clamp(1.75rem, 1.334rem + 2.083vw, 3rem);
-
-    /* --- 形状・影・動き --- */
-    --radius-1: 0.375rem;
-    --radius-2: 0.625rem;
-    --radius-3: 1rem;
+    /* --- 角丸：ほぼ直角に近い控えめな値（堅実な印象を作るため） --------- */
+    --radius-1: 0.25rem;
+    --radius-2: 0.5rem;
     --radius-full: 999rem;
 
-    --shadow-color: var(--hue-neutral);
-    --shadow-1: 0 1px 2px light-dark(oklch(20% 0.03 var(--shadow-color) / 0.06), oklch(0% 0 0 / 0.4));
-    --shadow-2: 0 1px 2px light-dark(oklch(20% 0.03 var(--shadow-color) / 0.06), oklch(0% 0 0 / 0.4)),
-                0 6px 16px -6px light-dark(oklch(20% 0.03 var(--shadow-color) / 0.12), oklch(0% 0 0 / 0.5));
-    --shadow-3: 0 2px 4px light-dark(oklch(20% 0.03 var(--shadow-color) / 0.06), oklch(0% 0 0 / 0.45)),
-                0 16px 36px -12px light-dark(oklch(20% 0.03 var(--shadow-color) / 0.18), oklch(0% 0 0 / 0.6));
+    /* --- 影：カードの輪郭は罫線で作るので、影はごく薄く1段階だけ -------- */
+    --shadow:
+      0 1px 2px
+        light-dark(oklch(20% 0.02 var(--hue-ink) / 0.05), oklch(0% 0 0 / 0.35)),
+      0 8px 24px -16px
+        light-dark(oklch(20% 0.02 var(--hue-ink) / 0.18), oklch(0% 0 0 / 0.5));
 
-    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-    --duration-1: 120ms;
-    --duration-2: 220ms;
+    /* --- 動き ---------------------------------------------------------- */
+    --ease: cubic-bezier(0.22, 1, 0.36, 1); /* 出だし速く終わりゆっくり */
+    --dur-1: 130ms;
+    --dur-2: 240ms;
 
-    --measure: 68ch;
-    --container: 76rem;
-    --container-narrow: 46rem;
+    /* --- 幅の基準 ------------------------------------------------------ */
+    --measure: 62ch; /* 本文1行の最大文字数（読みやすさの目安） */
+    --container: 68rem; /* 標準のコンテンツ幅 */
   }
 
-  /* 手動テーマ切替（JS で data-theme を付ける） */
-  :root[data-theme="light"] { color-scheme: light; }
-  :root[data-theme="dark"]  { color-scheme: dark; }
+  /* JS で <html data-theme="..."> を切り替えると OS 設定より優先される */
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
 }
 
-/* --------------------------------------------------------------------------
-  3. base — スタイル定義
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   3. base — 素の HTML タグそのものへのスタイル
+   ========================================================================== */
 @layer base {
   body {
-    font-family: var(--font-body);
-    font-size: var(--step-0);
+    font-family: var(--font-sans);
+    font-size: var(--text-0);
     line-height: var(--leading-normal);
-    color: var(--text-body);
-    background-color: var(--surface-base);
+    color: var(--ink-2);
+    background-color: var(--bg);
   }
 
-  h1, h3, h4 {
-    font-family: var(--font-display);
-    color: var(--text-strong);
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--ink);
+    line-height: var(--leading-snug);
+    font-weight: 700;
+  }
+  h1 {
+    font-size: var(--text-4);
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-tight);
-    font-weight: 680;
   }
-  h1 { font-size: var(--step-5); }
   h2 {
-    font-size: var(--step-3);
-    padding: 0.5em 0.7em;
-    border-left: 5px solid var(--brand);
-    border-bottom: 3px solid var(--border);
-    background-color: var(--surface-sunken);
-    color: var(--text-strong);
+    font-size: var(--text-3);
+    letter-spacing: var(--tracking-tight);
   }
-  h3 { font-size: var(--step-2); }
+  h3 {
+    font-size: var(--text-1);
+  }
   h4 {
-    display: inline-block;
-    font-size: var(--step-1);
-    line-height: var(--leading-snug);
-    padding-bottom: var(--space-2);
-    border-bottom: 2px solid var(--accent);
+    font-size: var(--text-0);
   }
-
-  small { font-size: var(--step--1); }
 
   a {
-    color: var(--brand-text);
+    color: var(--accent);
     text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    transition: color var(--duration-1) var(--ease-out);
+    text-underline-offset: 0.22em;
+    transition: color var(--dur-1) var(--ease);
   }
-  a:hover { color: var(--brand-hover); }
+  a:hover {
+    color: var(--accent-hover);
+  }
 
-  strong { color: var(--text-strong); font-weight: 650; }
+  strong,
+  b {
+    color: var(--ink);
+    font-weight: 650;
+  }
 
-  code, kbd, samp {
+  code {
     font-family: var(--font-mono);
-    font-size: 0.9em;
-  }
-  :not(pre) > code {
+    font-size: 0.88em;
     padding: 0.15em 0.4em;
     border-radius: var(--radius-1);
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-  }
-  pre {
-    padding: var(--space-4);
-    border-radius: var(--radius-2);
-    background: var(--surface-sunken);
-    border: 1px solid var(--border);
-    overflow-x: auto;
-    line-height: var(--leading-snug);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
   }
 
+  /* 区切り線：border ではなく背景色の細い帯として描く（高さを制御しやすい） */
   hr {
     border: 0;
     block-size: 1px;
-    background: var(--border);
+    background: var(--line);
   }
 
-  blockquote {
-    padding-inline-start: var(--space-4);
-    border-inline-start: 2px solid var(--accent);
-    color: var(--text-muted);
-  }
-
+  /* キーボード操作時だけフォーカス枠を出す（マウスのクリック時は出さない） */
   :focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
     border-radius: var(--radius-1);
   }
 
   ::selection {
-    background: var(--brand-soft);
-    color: var(--text-strong);
+    background: var(--accent-soft);
+    color: var(--ink);
   }
 }
 
-/* --------------------------------------------------------------------------
-  4. layout — 配置スタイルの定義
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   4. layout — 中身に依存しない「配置」の部品
+   ========================================================================== */
 @layer layout {
+  /* 中央寄せの本体。左右に最低 --sp-5 の余白を残しつつ最大幅まで広げる */
   .container {
-    inline-size: min(100% - var(--space-5) * 2, var(--container));
+    inline-size: min(100% - var(--sp-5) * 2, var(--container));
     margin-inline: auto;
   }
-  .container[data-width="narrow"] { --container: var(--container-narrow); }
 
-  .section { padding-block: var(--space-section); }
+  /* セクションの上下余白 */
+  .section {
+    padding-block: var(--sp-section);
+  }
 
-  /* 縦積み：隣接要素の間だけに余白を入れる（外側に漏らさない） */
-  .stack { display: flex; flex-direction: column; }
-  .stack > * + * { margin-block-start: var(--flow, var(--space-4)); }
-
-  /* 横並び：入りきらなければ折り返す */
+  /* cluster：横並び。入りきらなければ折り返す（タグ・ボタン群に使う）
+     --gap をインラインで上書きすれば、その場所だけ間隔を変えられる */
   .cluster {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--gap, var(--space-3));
+    gap: var(--gap, var(--sp-3));
   }
 
-  .split { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); }
-
-  /* 自動グリッド：最小幅を切ったら自然に列数が減る */
+  /* grid-auto：列の最小幅(--min)を下回ると自動で列数が減るグリッド。
+     min(...,100%) を挟むことで、画面が --min より狭くても はみ出さない */
   .grid-auto {
     display: grid;
-    gap: var(--gap, var(--space-5));
-    grid-template-columns: repeat(auto-fit, minmax(min(var(--min, 17rem), 100%), 1fr));
+    gap: var(--gap, var(--sp-4));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--min, 18rem), 100%), 1fr)
+    );
   }
 
-  .prose { max-inline-size: var(--measure); }
-  .prose > * + * { margin-block-start: var(--space-4); }
-  .prose > :is(h2, h3) { margin-block-start: var(--space-7); }
+  /* 本文の1行を読みやすい幅に制限する */
+  .measure {
+    max-inline-size: var(--measure);
+  }
 }
 
-/* --------------------------------------------------------------------------
-  5. components — 具体的なUI部品ごとのスタイル
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   5. components — 具体的な UI 部品
+   ========================================================================== */
 @layer components {
+  /* ------------------------------------------------------------------
+     skip-link：キーボード利用者が本文へ一気に飛べるリンク。
+     普段は画面外(-200%)に隠し、フォーカスされたときだけ現れる。
+     ------------------------------------------------------------------ */
+  .skip-link {
+    position: fixed;
+    inset-block-start: var(--sp-3);
+    inset-inline-start: var(--sp-3);
+    z-index: 100;
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius-1);
+    background: var(--accent);
+    color: var(--on-accent);
+    text-decoration: none;
+    translate: 0 -300%;
+  }
+  .skip-link:focus-visible {
+    translate: 0 0;
+  }
 
-  /* --- eyebrow: 等幅・大文字・レターススペースの見出しラベル --- */
-  .eyebrow {
-    display: inline-flex;
+  /* ------------------------------------------------------------------
+     site-header：上部に固定される細いヘッダー。
+     半透明＋背景ぼかしで、下のコンテンツを透かしつつ文字を読ませる。
+     ------------------------------------------------------------------ */
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 20;
+    border-block-end: 1px solid var(--line);
+    background: light-dark(
+      oklch(98.4% 0.003 var(--hue-ink) / 0.82),
+      oklch(15.5% 0.012 var(--hue-ink) / 0.82)
+    );
+    backdrop-filter: blur(10px);
+  }
+  .site-header__inner {
+    display: flex;
     align-items: center;
-    gap: var(--space-2);
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-3);
+  }
+  .site-header__brand {
     font-family: var(--font-mono);
-    font-size: var(--step--4);
+    font-size: var(--text--1);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
-    color: var(--text-muted);
-  }
-  .eyebrow::before {
-    content: "";
-    inline-size: var(--space-6);
-    block-size: 1px;
-    background: linear-gradient(to right, var(--accent), transparent);
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
   }
 
-  /* --- button --- */
-  .btn {
-    --btn-bg: var(--surface-raised);
-    --btn-fg: var(--text-strong);
-    --btn-border: var(--border-strong);
+  /* ナビ：狭い画面でははみ出す代わりに横スクロールさせる（折り返して2段にしない） */
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-1);
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox でスクロールバーを隠す */
+  }
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  } /* Chrome/Safari 用 */
+
+  .site-nav__link {
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius-1);
+    color: var(--ink-3);
+    font-size: var(--text--1);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      color var(--dur-1) var(--ease),
+      background-color var(--dur-1) var(--ease);
+  }
+  .site-nav__link:hover {
+    color: var(--ink);
+    background: var(--surface-2);
+  }
+  /* aria-current="page" が付いたリンク＝現在地。JS が付け外しする */
+  .site-nav__link[aria-current="page"] {
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* ------------------------------------------------------------------
+     theme-toggle：ダークモード切替。中身は隠した checkbox。
+     ------------------------------------------------------------------ */
+  .theme-toggle {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-5);
-    border: 1px solid var(--btn-border);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .theme-toggle input {
+    position: absolute;
+    opacity: 0;
+    inline-size: 0;
+  }
+  .theme-toggle__face {
+    display: grid;
+    place-items: center;
+    inline-size: 2.1rem;
+    block-size: 2.1rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    line-height: 1;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease);
+  }
+  .theme-toggle:hover .theme-toggle__face {
+    background: var(--surface-2);
+  }
+  .theme-toggle:has(input:focus-visible) .theme-toggle__face {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  /* ライト時は月（これから暗くする）、ダーク時は太陽を表示する */
+  .theme-toggle__face::after {
+    content: "🌙";
+  }
+  :root[data-theme="dark"] .theme-toggle__face::after {
+    content: "☀️";
+  }
+
+  /* ------------------------------------------------------------------
+     hero：最初に目に入る自己紹介ブロック
+     ------------------------------------------------------------------ */
+  .hero {
+    padding-block: clamp(2.5rem, 1.458rem + 5.208vw, 5.5rem) var(--sp-section);
+  }
+
+  /* ヒーローの骨格。
+     grid-template-areas を使うと、狭い画面での並び順（氏名 → 構造式 → 本文 → ボタン）と
+     広い画面での2段組みを、HTML の記述順を変えずに別々に指定できる。 */
+  .hero__inner {
+    display: grid;
+    gap: var(--sp-6);
+    grid-template-areas:
+      "id"
+      "mol"
+      "lead"
+      "cta";
+  }
+  @media (min-width: 54rem) {
+    .hero__inner {
+      /* 左＝テキスト、右＝構造式。minmax(0,…) は長い英数字による
+         列のはみ出しを防ぐための定石 */
+      grid-template-columns: minmax(0, 1fr) minmax(0, 21rem);
+      grid-template-areas:
+        "id   mol"
+        "lead mol"
+        "cta  mol";
+      column-gap: var(--sp-8);
+      row-gap: var(--sp-5);
+      align-items: start;
+    }
+    /* 3行分の高さの中で、構造式を縦方向の中央に置く */
+    .hero__mol {
+      align-self: center;
+    }
+  }
+
+  .hero__id {
+    grid-area: id;
+  }
+  .hero__lead {
+    grid-area: lead;
+  }
+  .hero__actions {
+    grid-area: cta;
+  }
+  .hero__mol {
+    grid-area: mol;
+  }
+
+  /* 氏名のローマ字表記。等幅＋大文字＋広い字間で「見出しの添え物」に見せる */
+  .hero__roman {
+    margin-block-start: var(--sp-2);
+    font-family: var(--font-mono);
+    font-size: var(--text--1);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero__meta {
+    margin-block-start: var(--sp-4);
+    color: var(--ink-3);
+    font-size: var(--text--1);
+  }
+  .hero__lead {
+    max-inline-size: var(--measure);
+    font-size: var(--text-1);
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------------------------------------------
+     hero__mol：構造式と SMILES の組。
+     枠も背景も付けず、地の上に直接置くことで見出しの一部として溶け込ませる。
+     矢印で結ばず上下に密着させ、短い罫線とキャプションで
+     「同じ化合物の2つの表記」であることを示す。
+     ------------------------------------------------------------------ */
+  .hero__mol {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-3);
+  }
+  .hero__molcap {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-2);
+    text-align: center;
+  }
+  /* 構造式と SMILES の間に挟む短い罫線。2つが一組であることの目印 */
+  .hero__molcap::before {
+    content: "";
+    inline-size: 2.5rem;
+    block-size: 1px;
+    background: var(--line-2);
+    margin-block-end: var(--sp-1);
+  }
+  .hero__smiles {
+    font-family: var(--font-mono);
+    font-size: var(--text-1);
+    font-weight: 600;
+    color: var(--accent);
+    overflow-wrap: anywhere;
+    /* base レイヤーの code スタイル（枠・背景）を解除して素の文字に戻す */
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .hero__molnote {
+    font-size: var(--text--2);
+    color: var(--ink-3);
+  }
+
+  /* ------------------------------------------------------------------
+     mol：構造式そのもの（インライン SVG）。
+     色は currentColor 経由で受け取るので、ダークモードでも自動で反転する。
+     ------------------------------------------------------------------ */
+  .mol {
+    color: var(--ink);
+    inline-size: min(100%, 18rem);
+  }
+  .mol .bond,
+  .mol .ring,
+  .mol .arom {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* 原子ラベル。酸素だけアクセント色にして官能基の位置を読み取りやすくする */
+  .mol .atom {
+    fill: currentColor;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .mol .atom--o {
+    fill: var(--accent);
+  }
+
+  /* --- 線が描かれていくアニメーション ---
+     stroke-dasharray で「線を破線にする」→ dashoffset で破線をずらすと、
+     線が端から現れるように見える。offset を 0 に近づけるのが描画アニメの定番。
+     図形ごとに線の総延長が違うので dasharray の値を分けている。 */
+  @keyframes mol-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes mol-fade {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .mol .ring,
+  .mol .arom,
+  .mol .bond {
+    animation: mol-draw 1.1s var(--ease) forwards;
+  }
+  .mol .ring {
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+  }
+  .mol .arom {
+    stroke-dasharray: 190;
+    stroke-dashoffset: 190;
+    animation-delay: 0.35s;
+  }
+  .mol .bond {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation-delay: 0.3s;
+  }
+  .mol .atom {
+    opacity: 0;
+    animation: mol-fade 0.5s var(--ease) 0.95s forwards;
+  }
+
+  /* ------------------------------------------------------------------
+     section-head：各セクションの見出し。
+     「01 / ABOUT」の小ラベル＋日本語見出し＋下の罫線で構成する。
+     ------------------------------------------------------------------ */
+  .section-head {
+    margin-block-end: var(--sp-6);
+  }
+  .section-head__label {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  /* ラベルの右に伸びる細い罫線（幅いっぱいまで自動で伸びる） */
+  .section-head__label::after {
+    content: "";
+    flex: 1;
+    block-size: 1px;
+    background: var(--line);
+  }
+  .section-head__title {
+    margin-block-start: var(--sp-3);
+  }
+  .section-head__note {
+    margin-block-start: var(--sp-3);
+    max-inline-size: var(--measure);
+    color: var(--ink-3);
+    font-size: var(--text--1);
+  }
+
+  /* ------------------------------------------------------------------
+     def-list：「所属 / 研究領域 / 興味・関心」のような項目と内容の対
+     広い画面では左に見出し・右に本文の2列、狭い画面では縦積みになる。
+     ------------------------------------------------------------------ */
+  .def-list {
+    display: grid;
+    gap: 0;
+  }
+  .def-list > div {
+    display: grid;
+    gap: var(--sp-1) var(--sp-6);
+    padding-block: var(--sp-5);
+    border-block-start: 1px solid var(--line);
+  }
+  .def-list > div:last-child {
+    border-block-end: 1px solid var(--line);
+  }
+  .def-list dt {
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-block-start: 0.35em; /* 右側の本文と視覚的な高さを揃える */
+  }
+  .def-list dd {
+    color: var(--ink-2);
+  }
+  /* 42rem 以上のときだけ2列にする（コンテナクエリではなく画面幅で十分な箇所） */
+  @media (min-width: 42rem) {
+    .def-list > div {
+      grid-template-columns: 9rem 1fr;
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     card：プロジェクト・資格などの箱。輪郭は影ではなく罫線で作る。
+     ------------------------------------------------------------------ */
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-5);
+    border: 1px solid var(--line);
     border-radius: var(--radius-2);
+    background: var(--surface);
+    transition:
+      border-color var(--dur-2) var(--ease),
+      box-shadow var(--dur-2) var(--ease);
+  }
+  /* カード内のリンクにホバーしたらカード全体を反応させる（:has で子から親を判定） */
+  .card:has(a:hover) {
+    border-color: var(--line-2);
+    box-shadow: var(--shadow);
+  }
+
+  .card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-2) var(--sp-4);
+  }
+  .card__title {
+    font-size: var(--text-1);
+  }
+  .card__body {
+    margin-block-start: var(--sp-4);
+    font-size: var(--text--1);
+    color: var(--ink-2);
+  }
+  /* margin-block-start: auto が「余った縦方向のスペース」をすべて footer の上に
+     押し込むため、フッターがカード下端に貼り付く。
+     grid-auto で横に並んだカードは同じ高さになるので、本文量が違っても
+     フッターの位置（＝リンクの位置）が揃って見える。 */
+  .card__footer {
+    margin-block-start: auto;
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  /* ------------------------------------------------------------------
+     tag：使用技術などの小さなラベル
+     ------------------------------------------------------------------ */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2em 0.65em;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-1);
+    background: var(--surface-2);
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    white-space: nowrap;
+  }
+
+  /* ------------------------------------------------------------------
+     status：資格などの状態バッジ。data-state で色が変わる。
+     ------------------------------------------------------------------ */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: 0.2em 0.7em;
+    border-radius: var(--radius-full);
+    background: var(--surface-2);
+    color: var(--ink-3);
+    font-size: var(--text--2);
+    white-space: nowrap;
+  }
+  /* ::before の小さな丸で状態を色分けする */
+  .status::before {
+    content: "";
+    inline-size: 0.45em;
+    block-size: 0.45em;
+    border-radius: var(--radius-full);
+    background: currentColor;
+  }
+  .status[data-state="done"] {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .status[data-state="planned"] {
+    background: var(--wip-soft);
+    color: var(--wip);
+  }
+
+  /* ------------------------------------------------------------------
+     link-inline：外部リンク。末尾に矢印を付けて遷移することを示す。
+     ------------------------------------------------------------------ */
+  .link-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--text--1);
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-all; /* 長い URL でもカードからはみ出させない */
+  }
+  .link-inline::after {
+    content: "↗";
+    font-size: 0.9em;
+    transition: translate var(--dur-1) var(--ease);
+  }
+  .link-inline:hover {
+    text-decoration: underline;
+  }
+  .link-inline:hover::after {
+    translate: 2px -2px;
+  }
+
+  /* ------------------------------------------------------------------
+     btn：CTA ボタン。既定は枠線のみ、data-variant="solid" で塗り。
+     ------------------------------------------------------------------ */
+  .btn {
+    --btn-bg: transparent;
+    --btn-fg: var(--ink);
+    --btn-border: var(--line-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-5);
+    border: 1px solid var(--btn-border);
+    border-radius: var(--radius-1);
     background: var(--btn-bg);
     color: var(--btn-fg);
-    font-size: var(--step--1);
+    font-size: var(--text--1);
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
     cursor: pointer;
     transition:
-      background-color var(--duration-1) var(--ease-out),
-      border-color var(--duration-1) var(--ease-out),
-      transform var(--duration-1) var(--ease-out),
-      box-shadow var(--duration-2) var(--ease-out);
+      background-color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease);
   }
-  .btn:hover { box-shadow: var(--shadow-2); }
-  .btn:active { transform: translateY(1px); box-shadow: none; }
-  .btn:disabled, .btn[aria-disabled="true"] {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
+  .btn:hover {
+    --btn-border: var(--accent);
+    --btn-fg: var(--accent);
   }
-
-  .btn[data-variant="primary"] {
-    --btn-bg: var(--brand);
-    --btn-fg: var(--on-brand);
-    --btn-border: transparent;
+  .btn[data-variant="solid"] {
+    --btn-bg: var(--accent);
+    --btn-fg: var(--on-accent);
+    --btn-border: var(--accent);
   }
-  .btn[data-variant="primary"]:hover { --btn-bg: var(--brand-hover); }
-
-  .btn[data-variant="soft"] {
-    --btn-bg: var(--brand-soft);
-    --btn-fg: var(--brand-text);
-    --btn-border: transparent;
+  .btn[data-variant="solid"]:hover {
+    --btn-bg: var(--accent-hover);
+    --btn-border: var(--accent-hover);
+    --btn-fg: var(--on-accent);
   }
 
-  .btn[data-variant="ghost"] {
-    --btn-bg: transparent;
-    --btn-border: transparent;
-    --btn-fg: var(--text-muted);
+  /* ------------------------------------------------------------------
+     skill-group：スキルのカテゴリ見出し（「言語」「データベース」など）
+     ------------------------------------------------------------------ */
+  .skill-group + .skill-group {
+    margin-block-start: var(--sp-7);
   }
-  .btn[data-variant="ghost"]:hover {
-    --btn-bg: var(--surface-sunken);
-    --btn-fg: var(--text-strong);
-    box-shadow: none;
-  }
-
-  .btn[data-size="sm"] { padding: var(--space-2) var(--space-3); font-size: var(--step--2); }
-  .btn[data-size="lg"] { padding: var(--space-4) var(--space-6); font-size: var(--step-0); }
-
-  /* --- card（コンテナクエリで自律的に段組み） --- */
-  .card {
-    container-type: inline-size;
-    padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-3);
-    background: var(--surface-raised);
-    box-shadow: var(--shadow-1);
-    transition: box-shadow var(--duration-2) var(--ease-out),
-                border-color var(--duration-2) var(--ease-out);
-  }
-  .card:has(a:hover, button:hover) {
-    box-shadow: var(--shadow-3);
-    border-color: var(--border-strong);
-  }
-  .card__title { font-size: var(--step-1); margin-block-end: var(--space-2); }
-  .card__body { color: var(--text-muted); font-size: var(--step--1); }
-  .card__footer {
-    margin-block-start: var(--space-5);
-    padding-block-start: var(--space-4);
-    border-block-start: 1px solid var(--border);
-  }
-
-  @container (min-width: 26rem) {
-    .card__footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
-  }
-
-  /* 画面幅ではなく中身の大きさに合わせて幅が決まるカード
-     ※ container-type: inline-size（コンテナクエリ機能）を持つ要素は、
-        fit-content のような中身依存の幅計算と共存できない
-        （祖先から見て「中身の情報を持たない」箱として扱われるため）。
-        そのため auto 幅にしたいカードはコンテナクエリを諦める。
-        → .card__footer の @container レイアウトは使えなくなる。 */
-  .card[data-width="auto"] {
-    container-type: normal;
-    inline-size: fit-content;
-    max-inline-size: 100%;
-  }
-
-  /* --- skill-card（section skills 用） --- */
-  .skill-card {
+  .skill-group__head {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-3);
-    background: var(--surface-raised);
-    text-align: center;
-    inline-size: fit-content;
-    max-inline-size: 100%;
-    transition: box-shadow var(--duration-2) var(--ease-out),
-                border-color var(--duration-2) var(--ease-out);
+    align-items: baseline;
+    gap: var(--sp-3);
+    margin-block-end: var(--sp-4);
   }
-  .skill-card:hover {
-    box-shadow: var(--shadow-2);
-    border-color: var(--border-strong);
-  }
-  .skill-card__icon {
-    inline-size: 3rem;
-    block-size: 3rem;
-    object-fit: contain;
-  }
-  .skill-card__name {
-    font-size: var(--step--1);
-    font-weight: 600;
-    color: var(--text-strong);
-  }
-
-  /* 習熟度ドットメーター。塗りつぶす個数は data-filled 属性の有無で指定する */
-  .skill-meter {
-    display: flex;
-    gap: var(--space-1);
-  }
-  .skill-meter__dot {
-    inline-size: 0.5rem;
-    block-size: 0.5rem;
-    border-radius: var(--radius-full);
-    background: var(--border);
-  }
-  .skill-meter__dot[data-filled] { background: var(--accent); }
-
-  /* --- badge --- */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    padding: 0.2em 0.7em;
-    border-radius: var(--radius-full);
-    background: var(--surface-sunken);
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--step--2);
-    letter-spacing: 0.02em;
+  .skill-group__title {
+    font-size: var(--text-0);
+    font-weight: 700;
     white-space: nowrap;
   }
-  .badge[data-tone="brand"]   { background: var(--brand-soft);   color: var(--brand-text); }
-  .badge[data-tone="success"] { background: var(--success-soft); color: var(--success); }
-  .badge[data-tone="warning"] { background: var(--warning-soft); color: var(--warning); }
-  .badge[data-tone="danger"]  { background: var(--danger-soft);  color: var(--danger); }
-
-  /* --- form --- */
-  .field { display: flex; flex-direction: column; gap: var(--space-2); }
-  .field__label {
-    font-size: var(--step--1);
-    font-weight: 600;
-    color: var(--text-strong);
-  }
-  .field__hint { font-size: var(--step--2); color: var(--text-muted); }
-
-  .input, .textarea, .select {
-    inline-size: 100%;
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-2);
-    background: var(--surface-raised);
-    color: var(--text-strong);
-    font-size: var(--step--1);
-    transition: border-color var(--duration-1) var(--ease-out),
-                box-shadow var(--duration-1) var(--ease-out);
-  }
-  .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
-  .input:focus-visible, .textarea:focus-visible, .select:focus-visible {
-    outline: none;
-    border-color: var(--brand);
-    box-shadow: 0 0 0 3px var(--brand-soft);
-  }
-  .textarea { min-block-size: 6rem; resize: vertical; }
-  .input:user-invalid {
-    border-color: var(--danger);
-    box-shadow: 0 0 0 3px var(--danger-soft);
-  }
-
-  /* 入力が不正なときだけエラー文を出す（:has で親から分岐） */
-  .field:has(.input:user-invalid) .field__hint { color: var(--danger); }
-
-  /* --- alert --- */
-  .alert {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
-    border-radius: var(--radius-2);
-    border: 1px solid var(--border);
-    background: var(--surface-sunken);
-    font-size: var(--step--1);
-  }
-  .alert::before {
-    content: "";
-    inline-size: 3px;
-    border-radius: var(--radius-full);
-    background: var(--text-muted);
-  }
-  .alert[data-tone="brand"]   { background: var(--brand-soft);   border-color: transparent; }
-  .alert[data-tone="brand"]::before   { background: var(--brand); }
-  .alert[data-tone="success"] { background: var(--success-soft); border-color: transparent; }
-  .alert[data-tone="success"]::before { background: var(--success); }
-  .alert[data-tone="warning"] { background: var(--warning-soft); border-color: transparent; }
-  .alert[data-tone="warning"]::before { background: var(--warning); }
-  .alert[data-tone="danger"]  { background: var(--danger-soft);  border-color: transparent; }
-  .alert[data-tone="danger"]::before  { background: var(--danger); }
-
-  /* --- table --- */
-  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-2); }
-  .table {
-    inline-size: 100%;
-    border-collapse: collapse;
-    font-size: var(--step--1);
-    font-variant-numeric: tabular-nums;
-  }
-  .table :is(th, td) {
-    padding: var(--space-3) var(--space-4);
-    text-align: start;
-    border-block-end: 1px solid var(--border);
-  }
-  .table thead th {
-    position: sticky;
-    inset-block-start: 0;
-    background: var(--surface-sunken);
-    color: var(--text-muted);
+  .skill-group__en {
+    flex: 1;
     font-family: var(--font-mono);
-    font-size: var(--step--2);
+    font-size: var(--text--2);
+    letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
-    font-weight: 500;
+    color: var(--ink-3);
   }
-  .table tbody tr:last-child :is(th, td) { border-block-end: 0; }
-  .table tbody tr { transition: background-color var(--duration-1) var(--ease-out); }
-  .table tbody tr:hover { background: var(--surface-sunken); }
-  .table td[data-numeric] { text-align: end; }
 
-  /* --- navbar --- */
-  .navbar {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 10;
-    padding-block: var(--space-3);
-    border-block-end: 1px solid var(--border);
-    background: light-dark(oklch(100% 0 0 / 0.72), oklch(18% 0.014 var(--hue-neutral) / 0.72));
-    backdrop-filter: blur(12px) saturate(1.4);
+  /* ------------------------------------------------------------------
+     skill-card：スキル1つ分。アイコン＋名称＋使用開始年＋習熟度＋説明文。
+     ------------------------------------------------------------------ */
+  .skill-card {
+    display: grid;
+    /* 左にアイコン列(2.5rem)、右に情報列。行は「見出し」と「説明」の2段 */
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--sp-2) var(--sp-4);
+    padding: var(--sp-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-2);
+    background: var(--surface);
+    transition: border-color var(--dur-2) var(--ease);
   }
-  .navbar__brand {
-    font-family: var(--font-display);
+  .skill-card:hover {
+    border-color: var(--line-2);
+  }
+
+  /* アイコンは2行分にまたがって左端に置く */
+  .skill-card__icon {
+    grid-row: 1 / span 2;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    object-fit: contain;
+  }
+  .skill-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-2) var(--sp-3);
+  }
+  .skill-card__name {
+    font-size: var(--text-0);
     font-weight: 700;
-    letter-spacing: var(--tracking-tight);
-    color: var(--text-strong);
-    text-decoration: none;
+    color: var(--ink);
   }
-  .navbar__link {
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-1);
-    color: var(--text-muted);
-    font-size: var(--step--1);
-    text-decoration: none;
+  .skill-card__since {
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    color: var(--ink-3);
   }
-  .navbar__link:hover { background: var(--surface-sunken); color: var(--text-strong); }
-  .navbar__link[aria-current="page"] { color: var(--brand-text); background: var(--brand-soft); }
+  .skill-card__desc {
+    grid-column: 2;
+    margin-block-start: var(--sp-1);
+    font-size: var(--text--1);
+    line-height: var(--leading-snug);
+    color: var(--ink-2);
+  }
+  /* 説明の下に置く補足（学習中の注記など） */
+  .skill-card__note {
+    grid-column: 2;
+    margin-block-start: var(--sp-2);
+    font-size: var(--text--2);
+    color: var(--ink-3);
+  }
 
-  /* --- switch --- */
-  .switch {
+  /* ------------------------------------------------------------------
+     level：習熟度メーター。塗る個数は各ドットの data-on 属性の有無で決まる。
+     role="img" + aria-label を HTML 側に付けて読み上げに対応させる。
+     ------------------------------------------------------------------ */
+  .level {
     display: inline-flex;
+    gap: 3px;
     align-items: center;
-    gap: var(--space-3);
-    cursor: pointer;
-    font-size: var(--step--1);
   }
-  .switch input { position: absolute; opacity: 0; inline-size: 0; }
-  .switch__track {
-    inline-size: 2.6rem;
-    block-size: 1.5rem;
-    padding: 3px;
+  .level__dot {
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
     border-radius: var(--radius-full);
-    background: var(--border-strong);
-    transition: background-color var(--duration-2) var(--ease-out);
+    border: 1px solid var(--line-2);
   }
-  .switch__thumb {
-    display: block;
-    inline-size: 1.125rem;
-    block-size: 1.125rem;
-    border-radius: var(--radius-full);
-    background: var(--surface-raised);
-    box-shadow: var(--shadow-1);
-    transition: translate var(--duration-2) var(--ease-out);
+  .level__dot[data-on] {
+    background: var(--accent);
+    border-color: var(--accent);
   }
-  .switch:has(input:checked) .switch__track { background: var(--brand); }
-  .switch:has(input:checked) .switch__thumb { translate: 1.1rem 0; }
-  .switch:has(input:focus-visible) .switch__track { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-  /* --- スキップリンク（キーボード操作の下限品質） --- */
-  .skip-link {
-    position: absolute;
-    inset-block-start: var(--space-3);
-    inset-inline-start: var(--space-3);
-    z-index: 100;
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-1);
-    background: var(--brand);
-    color: var(--on-brand);
-    translate: 0 -200%;
+  /* 習熟度の基準を説明する凡例 */
+  .level-legend {
+    margin-block-start: var(--sp-4);
+    padding: var(--sp-4) var(--sp-5);
+    border: 1px dashed var(--line-2);
+    border-radius: var(--radius-2);
+    font-size: var(--text--2);
+    color: var(--ink-3);
   }
-  .skip-link:focus-visible { translate: 0 0; }
+  .level-legend dl {
+    display: grid;
+    gap: var(--sp-1) var(--sp-4);
+    margin-block-start: var(--sp-3);
+  }
+  .level-legend div {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  @media (min-width: 46rem) {
+    .level-legend dl {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
 
-  /* --- timeline（section history 用） --- */
+  /* ------------------------------------------------------------------
+     timeline：略歴の年表。左に年月、右に内容。
+     ------------------------------------------------------------------ */
   .timeline {
     position: relative;
-    display: flex;
-    flex-direction: column;
   }
-  /* 1本の縦線を全項目にまたがって描画する（項目ごとに線を分割しない） */
+  /* 全項目をまたぐ1本の縦線。項目ごとに線を分割しないためリスト側に描く。
+     位置＝日付列の幅(7rem) + 列間隔の半分 − 線幅の半分 */
   .timeline::before {
     content: "";
     position: absolute;
-    inset-inline-start: calc(110px + var(--space-5) / 2 - 1px);
-    inset-block: 0.4em;
-    inline-size: 2px;
-    background: var(--border);
+    inset-inline-start: calc(7rem + var(--sp-5) / 2 - 1px);
+    inset-block: 0.55em 0.55em;
+    inline-size: 1px;
+    background: var(--line);
   }
-
-  .timeline-item {
+  .timeline__item {
     position: relative;
     display: grid;
-    grid-template-columns: 110px 1fr;
-    column-gap: var(--space-5);
+    grid-template-columns: 7rem 1fr;
+    column-gap: var(--sp-5);
   }
-  .timeline-item + .timeline-item {
-    margin-block-start: var(--space-6);
+  .timeline__item + .timeline__item {
+    margin-block-start: var(--sp-5);
   }
-  /* 線の上に重ねるドット */
-  .timeline-item::before {
+  /* 縦線の上に重ねる点。地の色で縁取りして線から浮かせる */
+  .timeline__item::before {
     content: "";
     position: absolute;
-    inset-inline-start: calc(110px + var(--space-5) / 2 - 5px);
-    inset-block-start: 0.4em;
-    inline-size: 10px;
-    block-size: 10px;
+    inset-inline-start: calc(7rem + var(--sp-5) / 2 - 4px);
+    inset-block-start: 0.5em;
+    inline-size: 8px;
+    block-size: 8px;
     border-radius: var(--radius-full);
     background: var(--accent);
-    box-shadow: 0 0 0 4px var(--surface-base);
-    z-index: 1;
+    box-shadow: 0 0 0 4px var(--bg);
   }
-
-  .timeline-date {
-    padding-block-start: 0.15em;
-    color: var(--text-muted);
+  .timeline__date {
     font-family: var(--font-mono);
-    font-size: var(--step--1);
-    letter-spacing: var(--tracking-label);
+    font-size: var(--text--2);
+    color: var(--ink-3);
+    padding-block-start: 0.35em;
+  }
+  .timeline__text {
+    color: var(--ink-2);
+    font-size: var(--text--1);
   }
 
-  .timeline-content h5 {
-    margin: 0;
-    font-size: var(--step-0);
-    color: var(--text-strong);
-  }
-
-  @media (max-width: 480px) {
+  /* 狭い画面：縦線と点を左端に寄せ、日付と内容を縦に積む */
+  @media (max-width: 34rem) {
     .timeline::before,
-    .timeline-item::before {
+    .timeline__item::before {
       inset-inline-start: 0;
     }
-    .timeline-item {
+    .timeline__item {
       grid-template-columns: 1fr;
-      row-gap: var(--space-1);
-      padding-inline-start: var(--space-5);
+      row-gap: var(--sp-1);
+      padding-inline-start: var(--sp-5);
     }
+  }
+
+  /* ------------------------------------------------------------------
+     activity：課外活動。役職・期間・内容を1件ずつ。
+     ------------------------------------------------------------------ */
+  .activity {
+    padding-block: var(--sp-5);
+    border-block-start: 1px solid var(--line);
+  }
+  .activity:last-child {
+    border-block-end: 1px solid var(--line);
+  }
+  .activity__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-2) var(--sp-4);
+  }
+  .activity__name {
+    font-size: var(--text-0);
+    font-weight: 700;
+  }
+  .activity__period {
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    color: var(--ink-3);
+  }
+  .activity__body {
+    margin-block-start: var(--sp-2);
+    max-inline-size: var(--measure);
+    font-size: var(--text--1);
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------------------------------------------
+     site-footer
+     ------------------------------------------------------------------ */
+  .site-footer {
+    margin-block-start: var(--sp-section);
+    padding-block: var(--sp-6);
+    border-block-start: 1px solid var(--line);
+    color: var(--ink-3);
+    font-size: var(--text--2);
+  }
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
   }
 }
 
-/* --------------------------------------------------------------------------
-  6. utilities
-  -------------------------------------------------------------------------- */
+/* ==========================================================================
+   6. utilities — 単機能の微調整クラス（最も強く効く）
+   ========================================================================== */
 @layer utilities {
-  .text-muted  { color: var(--text-muted); }
-  .text-strong { color: var(--text-strong); }
-  .text-brand  { color: var(--brand-text); }
-  .text-center { text-align: center; }
-  .mono { font-family: var(--font-mono); }
-  .measure { max-inline-size: var(--measure); }
+  .text-muted {
+    color: var(--ink-3);
+  }
+  .text-ink {
+    color: var(--ink);
+  }
+  .mono {
+    font-family: var(--font-mono);
+  }
+  .fs--1 {
+    font-size: var(--text--1);
+  }
+  .fs--2 {
+    font-size: var(--text--2);
+  }
 
-  .fs--1 { font-size: var(--step--1); }
-  .fs-1  { font-size: var(--step-1); }
-  .fs-2  { font-size: var(--step-2); }
-
-  .surface-sunken { background: var(--surface-sunken); }
-  .rounded { border-radius: var(--radius-3); }
-  .bordered { border: 1px solid var(--border); }
-
+  /* 視覚的には隠すが読み上げには残す（スクリーンリーダー専用テキスト）。
+     フォーカス時は隠さないので、skip-link のようなキーボード操作にも対応できる */
   .visually-hidden:not(:focus):not(:active) {
-    clip-path: inset(50%);
-    block-size: 1px;
-    inline-size: 1px;
-    overflow: hidden;
     position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
     white-space: nowrap;
   }
 }

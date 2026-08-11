@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="HTML / CSS / JavaScript">
+  <!-- 盾型のアウトライン（HTML5 のシールドを想起させる形） -->
+  <path fill="#E34F26" d="M8 5h32l-2.9 33.2L24 42 10.9 38.2z"/>
+  <path fill="#EF7B57" d="M24 8.4v30.4l10.6-3.1L37 8.4z"/>
+  <!-- 中央の < / > 記号（Web 言語全般の記号） -->
+  <path fill="#fff" d="m18.6 16.9 2.3 2.3-5 5 5 5-2.3 2.3-7.3-7.3z" transform="translate(1.6)"/>
+  <path fill="#fff" d="m29.4 16.9 7.3 7.3-7.3 7.3-2.3-2.3 5-5-5-5z" transform="translate(-1.6)"/>
+</svg>
