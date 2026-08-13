@@ -275,6 +275,7 @@
     color: var(--ink);
     line-height: var(--leading-snug);
     font-weight: 700;
+    margin-inline-start: var(--sp-2);
   }
   h1 {
     font-size: var(--text-4);
@@ -628,7 +629,7 @@
      ------------------------------------------------------------------ */
   .mol {
     color: var(--ink);
-    inline-size: min(100%, 18rem);
+    inline-size: min(100%, 20rem);
   }
   .mol .bond,
   .mol .ring,
@@ -646,8 +647,15 @@
     font-size: 15px;
     font-weight: 600;
   }
-  .mol .atom--o {
+  /* ヘテロ原子（炭素・水素以外）はアクセント色で目立たせる */
+  .mol .atom--o,
+  .mol .atom--n {
     fill: var(--accent);
+  }
+  /* くさび結合。線ではなく塗りつぶした三角形なので fill を使う */
+  .mol .wedge {
+    fill: currentColor;
+    stroke: none;
   }
 
   /* --- 線が描かれていくアニメーション ---
@@ -670,13 +678,14 @@
   .mol .bond {
     animation: mol-draw 1.1s var(--ease) forwards;
   }
+  /* dasharray はその線の実長以上にしておけばよい（六角形の周長は 40×6=240） */
   .mol .ring {
-    stroke-dasharray: 300;
-    stroke-dashoffset: 300;
+    stroke-dasharray: 260;
+    stroke-dashoffset: 260;
   }
   .mol .arom {
-    stroke-dasharray: 190;
-    stroke-dashoffset: 190;
+    stroke-dasharray: 175;
+    stroke-dashoffset: 175;
     animation-delay: 0.35s;
   }
   .mol .bond {
@@ -684,7 +693,9 @@
     stroke-dashoffset: 60;
     animation-delay: 0.3s;
   }
-  .mol .atom {
+  /* くさびと原子ラベルは線ではないので、描画ではなくフェードで登場させる */
+  .mol .atom,
+  .mol .wedge {
     opacity: 0;
     animation: mol-fade 0.5s var(--ease) 0.95s forwards;
   }
@@ -1042,6 +1053,69 @@
   }
 
   /* ------------------------------------------------------------------
+     tabs：同じ場所で内容を切り替える。見た目は下線タブ。
+
+     選択中かどうかは class ではなく aria-selected 属性で判定している。
+     こうすると「支援技術に伝える情報」と「見た目」の情報源が1つになり、
+     片方だけ更新し忘れて食い違う、という事故が起きない。
+     ------------------------------------------------------------------ */
+  .tabs__list {
+    display: flex;
+    gap: var(--sp-1);
+    margin-block-end: var(--sp-6);
+    border-block-end: 1px solid var(--line);
+    overflow-x: auto; /* タブが増えて入り切らない場合は横スクロール */
+  }
+  .tabs__tab {
+    position: relative;
+    padding: var(--sp-3) var(--sp-4);
+    border: 0;
+    background: none;
+    color: var(--ink-3);
+    font: inherit; /* button は既定でブラウザ独自のフォントになるため戻す */
+    font-size: var(--text--1);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color var(--dur-1) var(--ease);
+  }
+  .tabs__tab:hover {
+    color: var(--ink);
+  }
+  /* 選択中を示す下線。border ではなく ::after で描くことで、
+     選択の有無によってタブの高さが変わってしまうのを防ぐ */
+  .tabs__tab::after {
+    content: "";
+    position: absolute;
+    inset-inline: var(--sp-2);
+    inset-block-end: -1px; /* 一覧の罫線にちょうど重ねる */
+    block-size: 2px;
+    background: var(--accent);
+    scale: 0 1; /* 既定は横幅 0 ＝ 見えない */
+    transition: scale var(--dur-2) var(--ease);
+  }
+  .tabs__tab[aria-selected="true"] {
+    color: var(--ink);
+  }
+  .tabs__tab[aria-selected="true"]::after {
+    scale: 1 1;
+  }
+  .tabs__tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    border-radius: var(--radius-1);
+  }
+  .tabs__panel:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: var(--sp-3);
+    border-radius: var(--radius-1);
+  }
+  /* hidden 属性の効き目を保証する。display を持つ他の指定に負けないようにする */
+  .tabs__panel[hidden] {
+    display: none;
+  }
+
+  /* ------------------------------------------------------------------
      timeline：略歴の年表。左に年月、右に内容。
      ------------------------------------------------------------------ */
   .timeline {
@@ -1133,6 +1207,16 @@
     max-inline-size: var(--measure);
     font-size: var(--text--1);
     color: var(--ink-2);
+  }
+  /* 見出しの中に置く補助リンク。h3 から継承する font-weight を戻し、
+     margin-inline-start でタイトル本体との間隔を確保する。 */
+  .activity__link {
+    margin-inline-start: var(--sp-4);
+    font-size: var(--text--2);
+    font-weight: 400;
+    letter-spacing: var(--tracking-wide);
+    color: var(--ink-3);
+    white-space: nowrap; /* 「HPはこちら ↗」が矢印の前で折り返さないように */
   }
 
   /* ------------------------------------------------------------------

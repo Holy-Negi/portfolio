@@ -66,47 +66,81 @@
           <!-- ----------------------------------------------------------
                見出しの隣に置く構造式。枠や背景を持たせず、地の上に直接置く。
                下に SMILES を密着させ、同じ化合物が2つの記法で書けることを示す。
-               描いているのはアセチルサリチル酸（アスピリン）。
+               描いているのは L-トリプトファン（必須アミノ酸のひとつ）。
                ---------------------------------------------------------- -->
           <figure class="hero__mol">
-            <!-- ベンゼン環の頂点座標は中心 (95,130)・半径 44 の正六角形。
-                 環の内側の円は芳香族性を表す記法。
-                 結合線は原子ラベルに重ならないよう手前で止めてある。 -->
+            <!-- インドール環は、ベンゼン環（六員環）とピロール環（五員環）が
+                 1辺を共有した縮環構造。座標はすべて結合長 40 で作図している。
+                 ・六員環：中心 (90,130)・外接円半径 40 の正六角形
+                 ・内側の円は芳香族性を表す記法
+                 ・結合線は原子ラベルに重ならないよう手前で止めてある -->
             <svg
               class="mol"
-              viewBox="36 4 236 214"
+              viewBox="48 26 278 176"
               role="img"
-              aria-label="アセチルサリチル酸（アスピリン）の構造式"
+              aria-label="L-トリプトファンの構造式"
             >
-              <!-- ベンゼン環 -->
+              <!-- ベンゼン環。最後の辺 (124.6,150)→(124.6,110) が五員環との共有辺 -->
               <polygon
                 class="ring"
-                points="139,130 117,91.9 73,91.9 51,130 73,168.1 117,168.1"
+                points="124.6,110 90,90 55.4,110 55.4,150 90,170 124.6,150"
               />
-              <circle class="arom" cx="95" cy="130" r="27" />
+              <circle class="arom" cx="90" cy="130" r="25" />
 
-              <!-- カルボキシ基 -COOH -->
-              <line class="bond" x1="117" y1="91.9" x2="137" y2="57.3" />
-              <!-- C=O（二重結合は平行な2本線で描く） -->
-              <line class="bond" x1="139.2" y1="56.1" x2="124.7" y2="31.0" />
-              <line class="bond" x1="134.8" y1="58.6" x2="120.3" y2="33.5" />
-              <!-- C-OH -->
-              <line class="bond" x1="137" y1="57.3" x2="162" y2="57.3" />
+              <!-- ピロール環の残り4辺 -->
+              <line class="bond" x1="124.6" y1="110" x2="162.7" y2="97.6" />
+              <!-- C3=C2（二重結合は平行な2本線で描く。2本目は環の内側に引く） -->
+              <line class="bond" x1="162.7" y1="97.6" x2="186.2" y2="130" />
+              <line class="bond" x1="160.8" y1="105.2" x2="178.4" y2="129.4" />
+              <!-- C2-N と N-C7a。N ラベルの手前で止める -->
+              <line class="bond" x1="186.2" y1="130" x2="170.3" y2="151.9" />
+              <line class="bond" x1="150.3" y1="158.4" x2="124.6" y2="150" />
 
-              <!-- アセトキシ基 -O-C(=O)-CH3 -->
-              <line class="bond" x1="139" y1="130" x2="166" y2="130" />
-              <line class="bond" x1="184.5" y1="139.5" x2="199" y2="164.6" />
+              <!-- 側鎖 -CH2-CH(NH2)-COOH -->
+              <line class="bond" x1="162.7" y1="97.6" x2="197.3" y2="77.6" />
+              <line class="bond" x1="197.3" y1="77.6" x2="232" y2="97.6" />
+              <line class="bond" x1="232" y1="97.6" x2="266.6" y2="77.6" />
               <!-- C=O -->
-              <line class="bond" x1="201.2" y1="165.9" x2="186.7" y2="191.0" />
-              <line class="bond" x1="196.8" y1="163.4" x2="182.3" y2="188.5" />
-              <!-- C-CH3 -->
-              <line class="bond" x1="199" y1="164.6" x2="223" y2="164.6" />
+              <line class="bond" x1="263.6" y1="77.6" x2="263.6" y2="56" />
+              <line class="bond" x1="269.6" y1="77.6" x2="269.6" y2="56" />
+              <!-- C-OH -->
+              <line class="bond" x1="266.6" y1="77.6" x2="284.8" y2="88.1" />
+              <!-- Cα-NH2。太い三角（くさび形）は「紙面の手前に出ている」ことを
+                   表す立体表記で、これによって L 体（S 配置）だと分かる -->
+              <polygon class="wedge" points="232,97.6 227.5,126.5 236.5,126.5" />
 
               <!-- 原子ラベル -->
               <text
+                class="atom atom--n"
+                x="162.7"
+                y="162.4"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                N
+              </text>
+              <text
+                class="atom atom--n"
+                x="162.7"
+                y="180"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                H
+              </text>
+              <text
+                class="atom atom--n"
+                x="232"
+                y="140"
+                text-anchor="middle"
+                dominant-baseline="middle"
+              >
+                NH₂
+              </text>
+              <text
                 class="atom atom--o"
-                x="117"
-                y="22.7"
+                x="266.6"
+                y="42"
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
@@ -114,50 +148,23 @@
               </text>
               <text
                 class="atom atom--o"
-                x="168"
-                y="57.3"
+                x="290"
+                y="95.5"
                 text-anchor="start"
                 dominant-baseline="middle"
               >
                 OH
               </text>
-              <text
-                class="atom atom--o"
-                x="176"
-                y="130"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                O
-              </text>
-              <text
-                class="atom atom--o"
-                x="179"
-                y="199.2"
-                text-anchor="middle"
-                dominant-baseline="middle"
-              >
-                O
-              </text>
-              <text
-                class="atom"
-                x="228"
-                y="164.6"
-                text-anchor="start"
-                dominant-baseline="middle"
-              >
-                CH₃
-              </text>
             </svg>
 
             <figcaption class="hero__molcap">
-              <code class="hero__smiles">CC(=O)Oc1ccccc1C(=O)O</code>
+              <code class="hero__smiles">N[C@@H](Cc1c[nH]c2ccccc12)C(=O)O</code>
             </figcaption>
           </figure>
 
           <p class="hero__lead">
             有機合成化学・ケミカルバイオロジーを専攻しながら、プログラミングやケモインフォマティクスにも興味があり、独学で学びながらそれらを活用できるような個人制作のプロジェクトにも並行して取り組んでいます。<br />
-            研究現場の非効率をデジタル化・データの構造化により解消することに関心があります。
+            デジタル化・データの構造化により研究現場の非効率を解消することに関心があります。
           </p>
 
           <div class="hero__actions cluster">
@@ -381,7 +388,7 @@
             <article class="skill-card">
               <img
                 class="skill-card__icon"
-                src="./images/icons/web.svg"
+                src="./images/icons/html.svg"
                 alt=""
                 width="40"
                 height="40"
@@ -552,6 +559,30 @@
                 レポートや研究資料など、日常的な文書作成に使用しています。
               </p>
             </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/github.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">Git/GitHub</span>
+                <span class="skill-card__since">2025年〜</span>
+                <span class="level" role="img" aria-label="習熟度 3 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                レポートや研究資料など、日常的な文書作成に使用しています。
+              </p>
+            </article>
           </div>
         </div>
 
@@ -588,6 +619,30 @@
               </p>
               <p class="skill-card__note">学習を始めたばかりです。</p>
             </article>
+
+            <article class="skill-card">
+              <img
+                class="skill-card__icon"
+                src="./images/icons/chemdraw.svg"
+                alt=""
+                width="40"
+                height="40"
+              />
+              <div class="skill-card__head">
+                <span class="skill-card__name">ChemDraw</span>
+                <span class="skill-card__since">2024年〜</span>
+                <span class="level" role="img" aria-label="習熟度 4 / 5">
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot" data-on></span>
+                  <span class="level__dot"></span>
+                </span>
+              </div>
+              <p class="skill-card__desc">
+                日常的な有機化学の研究において毎日使用しています。
+              </p>
+            </article>
           </div>
         </div>
       </section>
@@ -606,11 +661,11 @@
           <article class="card">
             <div class="card__head">
               <h3 class="card__title">基本情報技術者試験</h3>
-              <span class="status" data-state="planned">取得予定</span>
+              <span class="status" data-state="done">取得済</span>
             </div>
             <p class="card__body">
-              IT の基礎知識を体系的に整理するため、受験を予定しています。
-              <!-- 取得後はこの行を「取得年月：2026年◯月」などに書き換えてください -->
+              ITの基礎知識を体系的に学ぶために受検しました。<br />
+              <b>取得年月：2026年8月</b>
             </p>
           </article>
         </div>
@@ -633,23 +688,46 @@
             <div class="activity__head">
               <h3 class="activity__name">
                 北海道大学生活協同組合 学生組織委員会
+                <span class="activity__link"
+                  ><a
+                    class="link-inline"
+                    href="https://hokudai-coop-gi.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >HPはこちら</a
+                  ></span
+                >
               </h3>
               <span class="activity__period">2022年4月〜</span>
             </div>
             <p class="activity__body">
-              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
-              活動内容をここに記載します。
+              大学生協には、組合員のよりよい生活を目指して活動を行う「組織委員会」という組織が存在し、私はそのうちの1つである学生組織委員会に大学入学時に所属しました。
+              学生委員会ではさまざまな活動を経験しましたが、中でも力を入れたのは「共済活動」です。
+              共済活動は、学生のための保障制度である「学生総合共済」の加入や認知を広げるための活動です。
+              自転車の無料点検を行う自転車点検会や、防災意識の向上を目的とした防災企画などの立案・運営を行いました。
             </p>
           </article>
 
           <article class="activity">
             <div class="activity__head">
-              <h3 class="activity__name">大学生協北海道ブロック 学生事務局</h3>
+              <h3 class="activity__name">
+                大学生協北海道ブロック 学生事務局
+                <span class="activity__link"
+                  ><a
+                    class="link-inline"
+                    href="https://www.hokkaido-univcoop.jp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >HPはこちら</a
+                  ></span
+                >
+              </h3>
               <span class="activity__period">2024年5月〜</span>
             </div>
             <p class="activity__body">
-              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
-              活動内容をここに記載します。
+              大学生協北海道ブロックは、北海道にある大学生協の組織活動を管轄する組織で、学生事務局はその中でも特に学生組織委員会を取りまとめる組織です。
+              学生組織委員会の引退後、そのまま学生事務局に所属しました。
+              学生事務局では、全道の学生委員が学生総合共済や共済活動について学べるようなセミナーの企画・運営を主に行いました。
             </p>
           </article>
 
@@ -657,12 +735,22 @@
             <div class="activity__head">
               <h3 class="activity__name">
                 北海道大学生活協同組合 院生組織委員会
+                <span class="activity__link"
+                  ><a
+                    class="link-inline"
+                    href="https://sites.google.com/view/hokudai-coop-insei"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >HPはこちら</a
+                  ></span
+                >
               </h3>
               <span class="activity__period">2026年4月〜</span>
             </div>
             <p class="activity__body">
-              <!-- TODO: 担当した役割・企画・工夫した点・成果を具体的に記載してください -->
-              活動内容をここに記載します。
+              院生組織委員会は、主に大学院生の生活をより良くすることを目的とした組織委員会です。
+              北海道ブロック学生事務局の引退後、そのまま院生委員会に所属しました。
+              これまでほど活動はできていませんが、主に院生どうしの交流を目的とした院生交流会の企画を行っています。
             </p>
           </article>
         </div>
@@ -677,36 +765,102 @@
           <h2 class="section-head__title">略歴</h2>
         </div>
 
-        <ol class="timeline" role="list">
-          <li class="timeline__item">
-            <time class="timeline__date" datetime="2022-04">2022年4月</time>
-            <p class="timeline__text">
-              北海道大学 総合理系入試にて入学<br />
-              北大生協 学生組織委員会 入部
-            </p>
-          </li>
-          <li class="timeline__item">
-            <time class="timeline__date" datetime="2023-04">2023年4月</time>
-            <p class="timeline__text">北海道大学 薬学部 薬科学科 進学</p>
-          </li>
-          <li class="timeline__item">
-            <time class="timeline__date" datetime="2024-05">2024年5月</time>
-            <p class="timeline__text">大学生協北海道ブロック 学生事務局 入部</p>
-          </li>
-          <li class="timeline__item">
-            <time class="timeline__date" datetime="2024-10">2024年10月</time>
-            <p class="timeline__text">
-              北海道大学 触媒科学研究所 分子触媒研究部門 浦口研究室 配属
-            </p>
-          </li>
-          <li class="timeline__item">
-            <time class="timeline__date" datetime="2026-04">2026年4月</time>
-            <p class="timeline__text">
-              北海道大学 大学院生命科学院 進学<br />
-              北大生協 院生組織委員会 入部
-            </p>
-          </li>
-        </ol>
+        <!-- ------------------------------------------------------------
+             タブ。WAI-ARIA の Tabs パターンに沿った属性を付けている。
+             ・role="tablist" / "tab" / "tabpanel" で役割を伝える
+             ・aria-selected="true" が「今選ばれているタブ」を表す唯一の情報源。
+               CSS もこの属性を見て見た目を変えるので、JS は属性を書き換えるだけでよい
+             ・aria-controls でタブ → パネルの対応を、
+               aria-labelledby でパネル → タブの対応を示す
+             ・JS が無効な環境でも最初のパネルは読める（hidden が付いていないため）
+             ------------------------------------------------------------ -->
+        <div class="tabs" data-tabs>
+          <div class="tabs__list" role="tablist" aria-label="略歴の表示切替">
+            <button
+              class="tabs__tab"
+              type="button"
+              role="tab"
+              id="tab-education"
+              aria-controls="panel-education"
+              aria-selected="true"
+            >
+              学歴
+            </button>
+            <button
+              class="tabs__tab"
+              type="button"
+              role="tab"
+              id="tab-extracurricular"
+              aria-controls="panel-extracurricular"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              課外活動
+            </button>
+          </div>
+
+          <div
+            class="tabs__panel"
+            role="tabpanel"
+            id="panel-education"
+            aria-labelledby="tab-education"
+            tabindex="0"
+          >
+            <ol class="timeline" role="list">
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2022-04">2022年4月</time>
+                <p class="timeline__text">北海道大学 総合理系入試にて入学</p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2023-04">2023年4月</time>
+                <p class="timeline__text">北海道大学 薬学部 薬科学科 進学</p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2024-10"
+                  >2024年10月</time
+                >
+                <p class="timeline__text">
+                  北海道大学 触媒科学研究所 分子触媒研究部門 浦口研究室 配属
+                </p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2026-04">2026年4月</time>
+                <p class="timeline__text">北海道大学 大学院生命科学院 進学</p>
+              </li>
+            </ol>
+          </div>
+
+          <!-- hidden 属性が付いたパネルは非表示。JS がこの属性を付け外しする -->
+          <div
+            class="tabs__panel"
+            role="tabpanel"
+            id="panel-extracurricular"
+            aria-labelledby="tab-extracurricular"
+            tabindex="0"
+            hidden
+          >
+            <ol class="timeline" role="list">
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2022-04">2022年4月</time>
+                <p class="timeline__text">
+                  北海道大学生活協同組合 学生組織委員会 入部
+                </p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2024-05">2024年5月</time>
+                <p class="timeline__text">
+                  大学生協北海道ブロック 学生事務局 入部
+                </p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2026-04">2026年4月</time>
+                <p class="timeline__text">
+                  北海道大学生活協同組合 院生組織委員会 入部
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -774,6 +928,69 @@
       );
 
       sections.forEach((section) => section && observer.observe(section));
+
+      /* ------------------------------------------------------------------
+         3. タブ切替（略歴：学歴／課外活動）
+
+         キーボード操作について：
+         タブ列の中では ← → で移動できるようにし、Tab キーは「タブ列を1つの
+         部品として」通り抜けるようにする。そのために、選択中のタブだけ
+         tabindex="0"、それ以外を tabindex="-1" にする。
+         この手法を「ロービングタブインデックス」と呼ぶ。
+         ------------------------------------------------------------------ */
+      document.querySelectorAll("[data-tabs]").forEach((tabs) => {
+        const tabList = tabs.querySelector('[role="tablist"]');
+        const tabButtons = [...tabs.querySelectorAll('[role="tab"]')];
+
+        /** 指定したタブを選択状態にする。focus=false ならフォーカスは移さない */
+        const select = (tab, { focus = true } = {}) => {
+          tabButtons.forEach((button) => {
+            const isSelected = button === tab;
+            const panel = document.getElementById(
+              button.getAttribute("aria-controls"),
+            );
+            if (!panel) {
+              // 対応するパネルが無いのは HTML 側の書き間違い。黙って無視しない
+              throw new Error(
+                `タブ #${button.id} の aria-controls が指すパネルが見つかりません`,
+              );
+            }
+            button.setAttribute("aria-selected", String(isSelected));
+            button.tabIndex = isSelected ? 0 : -1;
+            panel.hidden = !isSelected;
+          });
+          if (focus) tab.focus();
+        };
+
+        // クリックはタブ列側で受ける（イベント委譲）。タブが増えても手を入れずに済む
+        tabList.addEventListener("click", (event) => {
+          const tab = event.target.closest('[role="tab"]');
+          if (tab) select(tab, { focus: false });
+        });
+
+        tabList.addEventListener("keydown", (event) => {
+          const current = tabButtons.indexOf(document.activeElement);
+          if (current === -1) return;
+
+          const moves = { ArrowRight: 1, ArrowLeft: -1 };
+          let next;
+          if (event.key in moves) {
+            // 端まで来たら反対側へ回り込む
+            next =
+              (current + moves[event.key] + tabButtons.length) %
+              tabButtons.length;
+          } else if (event.key === "Home") {
+            next = 0;
+          } else if (event.key === "End") {
+            next = tabButtons.length - 1;
+          } else {
+            return;
+          }
+
+          event.preventDefault(); // ← → による横スクロールなどを止める
+          select(tabButtons[next]);
+        });
+      });
     </script>
   </body>
 </html>
