@@ -10,8 +10,8 @@
     <title>Holyのポートフォリオ</title>
     <link rel="stylesheet" href="style.css" />
 
-    <!-- 画面が描画される前にテーマを決めてしまうことで、
-         読み込み直後に白→黒とちらつく現象（FOUC）を防ぐ -->
+    <!-- FOUC (Flash of Unstyled Content) を防ぐために
+         画面が描画される前にテーマを決定 -->
     <script>
       (() => {
         const saved = localStorage.getItem("theme");
@@ -26,7 +26,7 @@
     <a class="skip-link" href="#main">本文へ移動</a>
 
     <!-- ==================================================================
-         ヘッダー（上部に固定）
+         ヘッダー
          ================================================================== -->
     <header class="site-header">
       <div class="container site-header__inner">
@@ -51,7 +51,7 @@
 
     <main id="main">
       <!-- ================================================================
-           ヒーロー（最初に目に入る自己紹介）
+           ヒーロー
            ================================================================ -->
       <section class="container hero" id="top">
         <div class="hero__inner">
@@ -64,9 +64,7 @@
           </div>
 
           <!-- ----------------------------------------------------------
-               見出しの隣に置く構造式。枠や背景を持たせず、地の上に直接置く。
-               下に SMILES を密着させ、同じ化合物が2つの記法で書けることを示す。
-               描いているのは L-トリプトファン（必須アミノ酸のひとつ）。
+               L-トリプトファン
                ---------------------------------------------------------- -->
           <figure class="hero__mol">
             <!-- インドール環は、ベンゼン環（六員環）とピロール環（五員環）が
@@ -107,7 +105,10 @@
               <line class="bond" x1="266.6" y1="77.6" x2="284.8" y2="88.1" />
               <!-- Cα-NH2。太い三角（くさび形）は「紙面の手前に出ている」ことを
                    表す立体表記で、これによって L 体（S 配置）だと分かる -->
-              <polygon class="wedge" points="232,97.6 227.5,126.5 236.5,126.5" />
+              <polygon
+                class="wedge"
+                points="232,97.6 227.5,126.5 236.5,126.5"
+              />
 
               <!-- 原子ラベル -->
               <text
@@ -184,6 +185,15 @@
               rel="noopener noreferrer"
               >Qiita</a
             >
+            <a
+              class="btn"
+              data-variant="solid"
+              href="https://zenn.dev/nekiroh"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Zenn</a
+            >
+            <br />
             <a class="btn" href="#projects">プロジェクトを見る</a>
             <a class="btn" href="mailto:ken15hori81@gmail.com"
               >ご連絡はこちら</a
@@ -580,7 +590,7 @@
                 </span>
               </div>
               <p class="skill-card__desc">
-                レポートや研究資料など、日常的な文書作成に使用しています。
+                個人制作のプロジェクトにおいてリポジトリ管理のために使用しています。
               </p>
             </article>
           </div>
@@ -665,7 +675,7 @@
             </div>
             <p class="card__body">
               ITの基礎知識を体系的に学ぶために受検しました。<br />
-              <b>取得年月：2026年8月</b>
+              <b>取得予定（2026年8月受検）</b>
             </p>
           </article>
         </div>
@@ -826,6 +836,12 @@
               <li class="timeline__item">
                 <time class="timeline__date" datetime="2026-04">2026年4月</time>
                 <p class="timeline__text">北海道大学 大学院生命科学院 進学</p>
+              </li>
+              <li class="timeline__item">
+                <time class="timeline__date" datetime="2028-03">2028年3月</time>
+                <p class="timeline__text">
+                  北海道大学 大学院生命科学院 卒業見込
+                </p>
               </li>
             </ol>
           </div>
