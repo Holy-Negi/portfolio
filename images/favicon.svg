@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 85 145 145">
+  <!-- ファビコン用に簡略化した L-トリプトファンのインドール環。
+       16px 程度まで縮むため、線を太くして原子ラベルは N のみに絞っている。
+       SVG ファビコンはブラウザ UI の配色に追従できるので、
+       ダークモード時の配色も併記している。 -->
+  <style>
+    .b { fill: none; stroke: #22252e; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+    .n { fill: #3d3f96; font: 700 46px "Segoe UI", Arial, sans-serif; }
+    @media (prefers-color-scheme: dark) {
+      .b { stroke: #e8e9ee; }
+      .n { fill: #a7a9f0; }
+    }
+  </style>
+  <polygon class="b" points="110,95.4 130,130 110,164.6 70,164.6 50,130 70,95.4" />
+  <circle class="b" cx="90" cy="130" r="23" />
+  <path class="b" d="M130,130 169.1,138.3 173.3,178.1 145,190" />
+  <path class="b" d="M124,180 110,164.6" />
+  <text class="n" x="137" y="215" text-anchor="middle">N</text>
+</svg>

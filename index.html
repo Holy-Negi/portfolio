@@ -8,7 +8,34 @@
       content="Holy のポートフォリオ。北海道大学大学院で有機合成化学を専攻しながら、化学研究現場の課題をソフトウェアで解決することに取り組んでいます。"
     />
     <title>Holyのポートフォリオ</title>
+    <link rel="canonical" href="https://holy-negi.github.io/portfolio/" />
     <link rel="stylesheet" href="style.css" />
+
+    <!-- ファビコン。SVG はブラウザ UI の配色に追従できるうえ拡大しても劣化しない -->
+    <link rel="icon" href="./images/favicon.svg" type="image/svg+xml" />
+    <!-- ブラウザのアドレスバー等に使われる配色（主に Android Chrome） -->
+    <meta name="theme-color" content="#3d3f96" />
+
+    <!-- OGP (Open Graph Protocol)。SNS やチャットに URL を貼ったときの
+         プレビュー表示に使われる。og:image は絶対 URL でないと読み取られない -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="Holyのポートフォリオ" />
+    <meta property="og:title" content="Holyのポートフォリオ" />
+    <meta
+      property="og:description"
+      content="北海道大学大学院で有機合成化学を専攻しながら、化学研究現場の課題をソフトウェアで解決することに取り組んでいます。"
+    />
+    <meta property="og:url" content="https://holy-negi.github.io/portfolio/" />
+    <meta
+      property="og:image"
+      content="https://holy-negi.github.io/portfolio/images/ogp.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ja_JP" />
+    <!-- X（旧 Twitter）は OGP に加えて独自のタグを見る。
+         summary_large_image は画像を大きく表示する形式 -->
+    <meta name="twitter:card" content="summary_large_image" />
 
     <!-- FOUC (Flash of Unstyled Content) を防ぐために
          画面が描画される前にテーマを決定 -->
@@ -30,7 +57,7 @@
          ================================================================== -->
     <header class="site-header">
       <div class="container site-header__inner">
-        <a class="site-header__brand" href="#top">HolyのPortfolio</a>
+        <a class="site-header__brand" href="#top">Holy's Portfolio</a>
 
         <nav class="site-nav" aria-label="セクション">
           <a class="site-nav__link" href="#about">基本情報</a>
@@ -69,52 +96,48 @@
           <figure class="hero__mol">
             <!-- インドール環は、ベンゼン環（六員環）とピロール環（五員環）が
                  1辺を共有した縮環構造。座標はすべて結合長 40 で作図している。
-                 ・六員環：中心 (90,130)・外接円半径 40 の正六角形
+                 ・六員環：中心 (90,130)・外接円半径 40 の正六角形（上辺が水平）
                  ・内側の円は芳香族性を表す記法
                  ・結合線は原子ラベルに重ならないよう手前で止めてある -->
             <svg
               class="mol"
-              viewBox="48 26 278 176"
+              viewBox="34 44 297 175"
               role="img"
               aria-label="L-トリプトファンの構造式"
             >
-              <!-- ベンゼン環。最後の辺 (124.6,150)→(124.6,110) が五員環との共有辺 -->
+              <!-- ベンゼン環。右下の辺 (130,130)→(110,164.6) が五員環との共有辺 -->
               <polygon
                 class="ring"
-                points="124.6,110 90,90 55.4,110 55.4,150 90,170 124.6,150"
+                points="110.0,95.4 130.0,130.0 110.0,164.6 70.0,164.6 50.0,130.0 70.0,95.4"
               />
-              <circle class="arom" cx="90" cy="130" r="25" />
-
-              <!-- ピロール環の残り4辺 -->
-              <line class="bond" x1="124.6" y1="110" x2="162.7" y2="97.6" />
-              <!-- C3=C2（二重結合は平行な2本線で描く。2本目は環の内側に引く） -->
-              <line class="bond" x1="162.7" y1="97.6" x2="186.2" y2="130" />
-              <line class="bond" x1="160.8" y1="105.2" x2="178.4" y2="129.4" />
-              <!-- C2-N と N-C7a。N ラベルの手前で止める -->
-              <line class="bond" x1="186.2" y1="130" x2="170.3" y2="151.9" />
-              <line class="bond" x1="150.3" y1="158.4" x2="124.6" y2="150" />
-
-              <!-- 側鎖 -CH2-CH(NH2)-COOH -->
-              <line class="bond" x1="162.7" y1="97.6" x2="197.3" y2="77.6" />
-              <line class="bond" x1="197.3" y1="77.6" x2="232" y2="97.6" />
-              <line class="bond" x1="232" y1="97.6" x2="266.6" y2="77.6" />
-              <!-- C=O -->
-              <line class="bond" x1="263.6" y1="77.6" x2="263.6" y2="56" />
-              <line class="bond" x1="269.6" y1="77.6" x2="269.6" y2="56" />
+              <circle class="arom" cx="90.0" cy="130.0" r="25" />
+              <!-- ピロール環。C3a-C3, C3=C2（内側の平行線つき）, C2-N, N-C7a -->
+              <line class="bond" x1="130.0" y1="130.0" x2="169.1" y2="138.3" />
+              <line class="bond" x1="169.1" y1="138.3" x2="173.3" y2="178.1" />
+              <line class="bond" x1="163.8" y1="144.9" x2="166.7" y2="172.8" />
+              <line class="bond" x1="173.3" y1="178.1" x2="147.5" y2="189.6" />
+              <line class="bond" x1="126.8" y1="183.3" x2="110.0" y2="164.6" />
+              <!-- 側鎖 C3-CH2-CH-C(=O)OH。sp2 の C3 では環外結合が外角を二等分する（126°）、
+                   sp3 の側鎖炭素では 120° ずつのジグザグ -->
+              <line class="bond" x1="169.1" y1="138.3" x2="198.9" y2="111.6" />
+              <line class="bond" x1="198.9" y1="111.6" x2="236.9" y2="123.9" />
+              <line class="bond" x1="236.9" y1="123.9" x2="266.6" y2="97.1" />
+              <!-- C=O（結合軸に垂直に ±3 ずらした2本線） -->
+              <line class="bond" x1="269.6" y1="96.5" x2="263.8" y2="69.3" />
+              <line class="bond" x1="263.7" y1="97.8" x2="257.9" y2="70.6" />
               <!-- C-OH -->
-              <line class="bond" x1="266.6" y1="77.6" x2="284.8" y2="88.1" />
+              <line class="bond" x1="266.6" y1="97.1" x2="289.8" y2="104.7" />
               <!-- Cα-NH2。太い三角（くさび形）は「紙面の手前に出ている」ことを
                    表す立体表記で、これによって L 体（S 配置）だと分かる -->
               <polygon
                 class="wedge"
-                points="232,97.6 227.5,126.5 236.5,126.5"
+                points="236.9,123.9 238.3,152.0 247.1,150.2"
               />
-
               <!-- 原子ラベル -->
               <text
                 class="atom atom--n"
-                x="162.7"
-                y="162.4"
+                x="136.8"
+                y="194.4"
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
@@ -122,8 +145,8 @@
               </text>
               <text
                 class="atom atom--n"
-                x="162.7"
-                y="180"
+                x="136.8"
+                y="211.4"
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
@@ -131,17 +154,17 @@
               </text>
               <text
                 class="atom atom--n"
-                x="232"
-                y="140"
-                text-anchor="middle"
+                x="239.2"
+                y="163.0"
+                text-anchor="start"
                 dominant-baseline="middle"
               >
                 NH₂
               </text>
               <text
                 class="atom atom--o"
-                x="266.6"
-                y="42"
+                x="258.3"
+                y="58.0"
                 text-anchor="middle"
                 dominant-baseline="middle"
               >
@@ -149,8 +172,8 @@
               </text>
               <text
                 class="atom atom--o"
-                x="290"
-                y="95.5"
+                x="298.7"
+                y="109.5"
                 text-anchor="start"
                 dominant-baseline="middle"
               >
@@ -158,46 +181,72 @@
               </text>
             </svg>
 
+            <!-- SMILES。構造式と同じ配色規則で、ヘテロ原子（N, O）だけ smi-het、
+                 括弧・環番号・二重結合記号など文法上の記号は smi-sym で薄くする -->
             <figcaption class="hero__molcap">
-              <code class="hero__smiles">N[C@@H](Cc1c[nH]c2ccccc12)C(=O)O</code>
+              <span class="hero__molcap-label" aria-hidden="true">SMILES</span>
+              <code
+                class="hero__smiles"
+                aria-label="SMILES: N[C@@H](Cc1c[nH]c2ccccc12)C(=O)O"
+                ><b class="smi-het">N</b><i class="smi-sym">[</i>C@@H<i
+                  class="smi-sym"
+                  >](</i
+                >Cc<i class="smi-sym">1</i>c<i class="smi-sym">[</i
+                ><b class="smi-het">nH</b><i class="smi-sym">]</i>c<i
+                  class="smi-sym"
+                  >2</i
+                >ccccc<i class="smi-sym">12)</i>C<i class="smi-sym">(=</i
+                ><b class="smi-het">O</b><i class="smi-sym">)</i
+                ><b class="smi-het">O</b></code
+              >
             </figcaption>
           </figure>
 
-          <p class="hero__lead">
-            有機合成化学・ケミカルバイオロジーを専攻しながら、プログラミングやケモインフォマティクスにも興味があり、独学で学びながらそれらを活用できるような個人制作のプロジェクトにも並行して取り組んでいます。<br />
-            デジタル化・データの構造化により研究現場の非効率を解消することに関心があります。
-          </p>
+          <div class="hero__lead">
+            <p>
+              有機合成化学・ケミカルバイオロジーを専攻しながら、プログラミングやケモインフォマティクスにも興味があり、独学で学びながらそれらを活用できるような個人制作のプロジェクトにも並行して取り組んでいます。
+            </p>
+            <p>
+              デジタル化・データの構造化により研究現場の非効率を解消することに関心があります。
+            </p>
+          </div>
 
-          <div class="hero__actions cluster">
-            <a
-              class="btn"
-              data-variant="solid"
-              href="https://github.com/Holy-Negi"
-              target="_blank"
-              rel="noopener noreferrer"
-              >GitHub</a
-            >
-            <a
-              class="btn"
-              data-variant="solid"
-              href="https://qiita.com/Holy_"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Qiita</a
-            >
-            <a
-              class="btn"
-              data-variant="solid"
-              href="https://zenn.dev/nekiroh"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Zenn</a
-            >
-            <br />
-            <a class="btn" href="#projects">プロジェクトを見る</a>
-            <a class="btn" href="mailto:ken15hori81@gmail.com"
-              >ご連絡はこちら</a
-            >
+          <!-- 2段組み。flex の中では <br> が改行として働かないため、
+               cluster を2つ重ねて段を作る -->
+          <div class="hero__actions">
+            <div class="cluster">
+              <a
+                class="btn"
+                data-variant="solid"
+                href="https://github.com/Holy-Negi"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub</a
+              >
+              <a
+                class="btn"
+                data-variant="solid"
+                href="https://qiita.com/Holy_"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Qiita</a
+              >
+              <a
+                class="btn"
+                data-variant="solid"
+                href="https://zenn.dev/nekiroh"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Zenn</a
+              >
+            </div>
+
+            <div class="cluster">
+              <a class="btn" href="#projects">プロジェクトを見る</a>
+              <a class="btn" href="mailto:ken15hori81@gmail.com"
+                >✉️ご連絡はこちら</a
+              >
+            </div>
           </div>
         </div>
       </section>
@@ -207,7 +256,7 @@
            ================================================================ -->
       <section class="container section" id="about">
         <div class="section-head">
-          <p class="section-head__label">01 / About</p>
+          <p class="section-head__label">01 About</p>
           <h2 class="section-head__title">基本情報</h2>
         </div>
 
@@ -218,7 +267,13 @@
               北海道大学 大学院生命科学院 生命科学専攻 生命医薬科学コース
               修士1年<br />
               <span class="text-muted fs--1"
-                >触媒科学研究所 分子触媒研究部門 浦口研究室</span
+                >触媒科学研究所 分子触媒研究部門 浦口研究室<br /><a
+                  class="link-inline"
+                  href="https://www.cat.hokudai.ac.jp/uraguchi/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >研究室HPはこちら</a
+                ></span
               >
             </dd>
           </div>
@@ -237,7 +292,10 @@
           </div>
           <div>
             <dt>志望領域</dt>
-            <dd>化学業界における IT／DX 領域、バックエンド・インフラ領域</dd>
+            <dd>
+              化学業界における IT／DX
+              領域、バックエンド・インフラ領域／ラボオートメーション
+            </dd>
           </div>
         </dl>
       </section>
@@ -247,7 +305,7 @@
            ================================================================ -->
       <section class="container section" id="projects">
         <div class="section-head">
-          <p class="section-head__label">02 / Projects</p>
+          <p class="section-head__label">02 Projects</p>
           <h2 class="section-head__title">プロジェクト</h2>
           <p class="section-head__note">
             個人で企画・設計・実装したプロジェクトです。
@@ -260,6 +318,24 @@
               <h3 class="card__title">電子実験ノート（ELN）</h3>
               <span class="tag">個人開発 / 2026〜</span>
             </div>
+
+            <!-- 画面のスクリーンショット。クリックで原寸表示できるよう
+                 リンクで包んでいる。width/height を書いておくと画像の読み込み前に
+                 領域が確保され、読み込み完了時のレイアウトのずれを防げる -->
+            <a
+              class="card__shot"
+              href="./images/eln.png"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="./images/eln.png"
+                alt="電子実験ノートの画面。登録した化合物の構造式と、分子量・LogP・InChIKey などの物性値が一覧表示されている"
+                width="1060"
+                height="623"
+                loading="lazy"
+              />
+            </a>
 
             <p class="card__body">
               化学反応の記録・管理を目的とした<strong>電子実験ノート</strong>（ELN;
@@ -301,7 +377,7 @@
            ================================================================ -->
       <section class="container section" id="skills">
         <div class="section-head">
-          <p class="section-head__label">03 / Skills</p>
+          <p class="section-head__label">03 Skills</p>
           <h2 class="section-head__title">スキルセット</h2>
           <p class="section-head__note">
             現時点で扱える技術と、その習得状況です。習熟度は下記の基準で自己評価しています。
@@ -385,7 +461,10 @@
               <p class="skill-card__desc">
                 大学1年の情報の授業で学習を開始しました。
                 2026年には東京大学松尾研究室が主催する<a
+                  class="link-inline"
                   href="https://matsuo-institute.com/seminar/gci-2026s/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   >GCI講座</a
                 >を受講し、データサイエンス・機械学習の学習にも使用しました。
                 同年に開始した個人開発プロジェクトでは、バックエンドの実装言語として使用しています。
@@ -662,7 +741,7 @@
            ================================================================ -->
       <section class="container section" id="certification">
         <div class="section-head">
-          <p class="section-head__label">04 / Certification</p>
+          <p class="section-head__label">04 Certification</p>
           <h2 class="section-head__title">資格</h2>
           <p class="section-head__note">取得済み、および取得予定の資格です。</p>
         </div>
@@ -671,7 +750,7 @@
           <article class="card">
             <div class="card__head">
               <h3 class="card__title">基本情報技術者試験</h3>
-              <span class="status" data-state="done">取得済</span>
+              <span class="status" data-state="planned">取得予定</span>
             </div>
             <p class="card__body">
               ITの基礎知識を体系的に学ぶために受検しました。<br />
@@ -686,7 +765,7 @@
            ================================================================ -->
       <section class="container section" id="activities">
         <div class="section-head">
-          <p class="section-head__label">05 / Activities</p>
+          <p class="section-head__label">05 Activities</p>
           <h2 class="section-head__title">課外活動</h2>
           <p class="section-head__note">
             学業・研究以外に継続して取り組んできた活動です。
@@ -771,7 +850,7 @@
            ================================================================ -->
       <section class="container section" id="history">
         <div class="section-head">
-          <p class="section-head__label">06 / History</p>
+          <p class="section-head__label">06 History</p>
           <h2 class="section-head__title">略歴</h2>
         </div>
 
@@ -814,6 +893,7 @@
             role="tabpanel"
             id="panel-education"
             aria-labelledby="tab-education"
+            data-print-label="学歴"
             tabindex="0"
           >
             <ol class="timeline" role="list">
@@ -840,7 +920,7 @@
               <li class="timeline__item">
                 <time class="timeline__date" datetime="2028-03">2028年3月</time>
                 <p class="timeline__text">
-                  北海道大学 大学院生命科学院 卒業見込
+                  北海道大学 大学院生命科学院 修了見込
                 </p>
               </li>
             </ol>
@@ -852,6 +932,7 @@
             role="tabpanel"
             id="panel-extracurricular"
             aria-labelledby="tab-extracurricular"
+            data-print-label="課外活動"
             tabindex="0"
             hidden
           >

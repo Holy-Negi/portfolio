@@ -373,10 +373,6 @@
     );
   }
 
-  /* 本文の1行を読みやすい幅に制限する */
-  .measure {
-    max-inline-size: var(--measure);
-  }
 }
 
 /* ==========================================================================
@@ -555,28 +551,26 @@
   .hero__lead {
     grid-area: lead;
   }
+  /* 2段組み。justify-items: start で、各段がボタンの幅だけに収まるようにする */
   .hero__actions {
     grid-area: cta;
+    display: grid;
+    justify-items: start;
+    gap: var(--sp-3);
   }
   .hero__mol {
     grid-area: mol;
   }
 
-  /* 氏名のローマ字表記。等幅＋大文字＋広い字間で「見出しの添え物」に見せる */
-  .hero__roman {
-    margin-block-start: var(--sp-2);
-    font-family: var(--font-mono);
-    font-size: var(--text--1);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    color: var(--ink-3);
-  }
   .hero__meta {
     margin-block-start: var(--sp-4);
     color: var(--ink-3);
     font-size: var(--text--1);
   }
+  /* 2つの段落を収める箱。grid + gap で段落間の余白をまとめて指定する */
   .hero__lead {
+    display: grid;
+    gap: var(--sp-3);
     max-inline-size: var(--measure);
     font-size: var(--text-1);
     color: var(--ink-2);
@@ -597,29 +591,49 @@
     display: grid;
     justify-items: center;
     gap: var(--sp-2);
-    text-align: center;
+    inline-size: 100%;
   }
-  /* 構造式と SMILES の間に挟む短い罫線。2つが一組であることの目印 */
-  .hero__molcap::before {
+  /* 「SMILES」のラベル。左右に罫線を伸ばして構造式との区切りにする。
+     grid の 1fr auto 1fr で「線・文字・線」を横並びにし、::before/::after が線 */
+  .hero__molcap-label {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--sp-3);
+    inline-size: 100%;
+    font-family: var(--font-mono);
+    font-size: var(--text--2);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .hero__molcap-label::before,
+  .hero__molcap-label::after {
     content: "";
-    inline-size: 2.5rem;
     block-size: 1px;
     background: var(--line-2);
-    margin-block-end: var(--sp-1);
   }
   .hero__smiles {
     font-family: var(--font-mono);
-    font-size: var(--text-1);
+    font-size: var(--text-0);
     font-weight: 600;
-    color: var(--accent);
+    color: var(--ink);
     overflow-wrap: anywhere;
     /* base レイヤーの code スタイル（枠・背景）を解除して素の文字に戻す */
     padding: 0;
     border: 0;
     background: none;
+    /* クリック1回で文字列全体を選択できる（コピーして使う人向け） */
+    user-select: all;
   }
-  .hero__molnote {
-    font-size: var(--text--2);
+  /* 構造式の原子ラベルと同じ配色。ヘテロ原子＝アクセント、文法記号＝薄い色 */
+  .hero__smiles .smi-het {
+    font-weight: inherit;
+    color: var(--accent);
+  }
+  .hero__smiles .smi-sym {
+    font-style: normal;
+    font-weight: 400;
     color: var(--ink-3);
   }
 
@@ -798,6 +812,24 @@
   }
   .card__title {
     font-size: var(--text-1);
+  }
+  /* カード内のスクリーンショット。overflow: hidden で角丸から画像を
+     はみ出させない。img の display: block は inline 由来の下余白を消すため */
+  .card__shot {
+    display: block;
+    /* 原寸 1060px のまま伸ばすと間延びするので上限を設ける。
+       min(100%, ...) で、カードが上限より狭い場合ははみ出さない */
+    inline-size: min(100%, 30rem);
+    margin-block-start: var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-2);
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .card__shot img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
   }
   .card__body {
     margin-block-start: var(--sp-4);
@@ -1064,7 +1096,12 @@
     gap: var(--sp-1);
     margin-block-end: var(--sp-6);
     border-block-end: 1px solid var(--line);
-    overflow-x: auto; /* タブが増えて入り切らない場合は横スクロール */
+    /* タブが増えて入り切らない場合は横スクロール。
+       overflow-x だけを指定すると overflow-y の visible は auto に変わる仕様なので、
+       縦は hidden を明示する。下線 (::after) がはみ出す 1px 分は padding で確保し、
+       クリップされないようにしている */
+    overflow: auto hidden;
+    padding-block-end: 1px;
   }
   .tabs__tab {
     position: relative;
@@ -1248,14 +1285,8 @@
   .text-ink {
     color: var(--ink);
   }
-  .mono {
-    font-family: var(--font-mono);
-  }
   .fs--1 {
     font-size: var(--text--1);
-  }
-  .fs--2 {
-    font-size: var(--text--2);
   }
 
   /* 視覚的には隠すが読み上げには残す（スクリーンリーダー専用テキスト）。
@@ -1267,5 +1298,85 @@
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+}
+
+/* ==========================================================================
+   7. print — 紙・PDF 出力用
+   @layer の外に書いているため、レイヤー内のどの指定よりも優先される。
+   （レイヤー付きスタイルはレイヤー無しスタイルに必ず負ける、というカスケードの規則）
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  /* 紙面では light-dark() が常に明色側を返すようにする */
+  html {
+    color-scheme: light;
+    scroll-behavior: auto;
+  }
+  body {
+    background: #fff;
+  }
+
+  /* 画面操作のための部品は印刷しない */
+  .skip-link,
+  .theme-toggle,
+  .site-nav,
+  .tabs__list {
+    display: none;
+  }
+
+  /* 追従ヘッダーを解除しないと、各ページの先頭に重なって刷られる */
+  .site-header {
+    position: static;
+    background: none;
+    backdrop-filter: none;
+  }
+
+  /* タブは紙では切り替えられないので、全パネルを展開して見出しを補う */
+  .tabs__panel[hidden] {
+    display: block;
+  }
+  .tabs__panel::before {
+    content: attr(data-print-label);
+    display: block;
+    margin-block-end: var(--sp-3);
+    font-size: var(--text-0);
+    font-weight: 700;
+  }
+  .tabs__panel + .tabs__panel {
+    margin-block-start: var(--sp-6);
+  }
+
+  /* 紙ではリンク先が辿れないので、URL を文字として添える */
+  .link-inline[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: var(--text--2);
+    font-weight: 400;
+    word-break: break-all;
+  }
+
+  /* ページの切れ目でブロックが分断されないようにする */
+  .card,
+  .skill-card,
+  .activity,
+  .timeline__item,
+  .skill-group {
+    break-inside: avoid;
+  }
+  .section {
+    break-before: auto;
+  }
+
+  /* 登場アニメーションは紙では意味がないので初期状態のまま出さない */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
   }
 }
