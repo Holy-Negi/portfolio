@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="機器分析">
+  <!-- 基線と、高さの異なるピーク（NMR スペクトルを模した汎用アイコン） -->
+  <path d="M5 41h38" stroke="#64748B" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M5 37h7l2-13 2 13h4l1.5-7 1.5 7h3l2-27 2 27h4l1.5-5 1.5 5h5"
+        fill="none" stroke="#0284C7" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
