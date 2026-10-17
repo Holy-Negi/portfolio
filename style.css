@@ -190,15 +190,15 @@
     --font-sans:
       "Inter", "Helvetica Neue", "Segoe UI", "Hiragino Kaku Gothic ProN",
       "Yu Gothic UI", "Noto Sans JP", system-ui, sans-serif;
-    /* 等幅：年号・セクション番号・技術名など「データ的な文字」に使い、本文と質感を分ける */
+    /* 等幅：SMILES 表記専用。IBM Plex Mono は index.html で Google Fonts から読み込む */
     --font-mono:
-      ui-monospace, "SF Mono", "JetBrains Mono", "Consolas", "Noto Sans Mono",
-      monospace;
+      "IBM Plex Mono", ui-monospace, "SF Mono", "Consolas", monospace;
 
     /* --- 文字サイズ：clamp(最小, 可変, 最大) ---------------------------
        画面幅 320px→1280px の間で滑らかに拡大する。step-0 が本文の基準。
-       負の番号は本文より小さい文字、正の番号は見出し。 */
-    --text--2: clamp(0.72rem, 0.705rem + 0.075vw, 0.765rem);
+       負の番号は本文より小さい文字、正の番号は見出し。
+       最小の --text--2 でも 12px を下回らないようにしている */
+    --text--2: clamp(0.75rem, 0.733rem + 0.083vw, 0.8rem);
     --text--1: clamp(0.83rem, 0.807rem + 0.117vw, 0.9rem);
     --text-0: clamp(0.95rem, 0.925rem + 0.125vw, 1.025rem);
     --text-1: clamp(1.13rem, 1.083rem + 0.233vw, 1.27rem);
@@ -229,13 +229,6 @@
     --radius-1: 0.25rem;
     --radius-2: 0.5rem;
     --radius-full: 999rem;
-
-    /* --- 影：カードの輪郭は罫線で作るので、影はごく薄く1段階だけ -------- */
-    --shadow:
-      0 1px 2px
-        light-dark(oklch(20% 0.02 var(--hue-ink) / 0.05), oklch(0% 0 0 / 0.35)),
-      0 8px 24px -16px
-        light-dark(oklch(20% 0.02 var(--hue-ink) / 0.18), oklch(0% 0 0 / 0.5));
 
     /* --- 動き ---------------------------------------------------------- */
     --ease: cubic-bezier(0.22, 1, 0.36, 1); /* 出だし速く終わりゆっくり */
@@ -275,7 +268,6 @@
     color: var(--ink);
     line-height: var(--leading-snug);
     font-weight: 700;
-    margin-inline-start: var(--sp-2);
   }
   h1 {
     font-size: var(--text-4);
@@ -367,12 +359,18 @@
   .grid-auto {
     display: grid;
     gap: var(--gap, var(--sp-4));
+    /* auto-fill は空の列も確保するため、項目が1つでも横幅いっぱいに伸びない */
     grid-template-columns: repeat(
-      auto-fit,
+      auto-fill,
       minmax(min(var(--min, 18rem), 100%), 1fr)
     );
   }
 
+  /* stack：子要素を縦に積み、間隔を揃える */
+  .stack {
+    display: grid;
+    gap: var(--gap, var(--sp-5));
+  }
 }
 
 /* ==========================================================================
@@ -401,28 +399,33 @@
 
   /* ------------------------------------------------------------------
      site-header：上部に固定される細いヘッダー。
-     半透明＋背景ぼかしで、下のコンテンツを透かしつつ文字を読ませる。
      ------------------------------------------------------------------ */
   .site-header {
     position: sticky;
     inset-block-start: 0;
     z-index: 20;
     border-block-end: 1px solid var(--line);
-    background: light-dark(
-      oklch(98.4% 0.003 var(--hue-ink) / 0.82),
-      oklch(15.5% 0.012 var(--hue-ink) / 0.82)
-    );
-    backdrop-filter: blur(10px);
+    background: var(--bg);
   }
   .site-header__inner {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--sp-4);
+    gap: var(--sp-2) var(--sp-4);
     padding-block: var(--sp-3);
   }
+  /* 狭い画面：ナビを2段目に回す。order で表示順だけ末尾に移し、
+     flex-basis: 100% で1行を占有させる。負の margin はリンクの左余白の分だけ
+     ずらして、文字の左端をサイト名に揃えるため */
+  @media (max-width: 48rem) {
+    .site-nav {
+      order: 1;
+      flex-basis: 100%;
+      margin-inline: calc(var(--sp-3) * -1);
+    }
+  }
   .site-header__brand {
-    font-family: var(--font-mono);
     font-size: var(--text--1);
     font-weight: 600;
     letter-spacing: var(--tracking-wide);
@@ -466,45 +469,41 @@
   }
 
   /* ------------------------------------------------------------------
-     theme-toggle：ダークモード切替。中身は隠した checkbox。
+     theme-toggle：ダークモード切替ボタン。アイコンは currentColor で描く SVG。
      ------------------------------------------------------------------ */
   .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    flex-shrink: 0;
-    cursor: pointer;
-  }
-  .theme-toggle input {
-    position: absolute;
-    opacity: 0;
-    inline-size: 0;
-  }
-  .theme-toggle__face {
     display: grid;
     place-items: center;
-    inline-size: 2.1rem;
-    block-size: 2.1rem;
+    flex-shrink: 0;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    padding: 0;
     border: 1px solid var(--line-2);
     border-radius: var(--radius-full);
-    font-size: 0.85rem;
-    line-height: 1;
+    background: none;
+    color: var(--ink-2);
+    cursor: pointer;
     transition:
       background-color var(--dur-1) var(--ease),
-      border-color var(--dur-1) var(--ease);
+      color var(--dur-1) var(--ease);
   }
-  .theme-toggle:hover .theme-toggle__face {
+  .theme-toggle:hover {
     background: var(--surface-2);
+    color: var(--ink);
   }
-  .theme-toggle:has(input:focus-visible) .theme-toggle__face {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
+  .theme-toggle__icon {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
-  /* ライト時は月（これから暗くする）、ダーク時は太陽を表示する */
-  .theme-toggle__face::after {
-    content: "🌙";
-  }
-  :root[data-theme="dark"] .theme-toggle__face::after {
-    content: "☀️";
+  /* ライト時は月（これから暗くする）、ダーク時は太陽だけを表示する */
+  :root[data-theme="dark"] .theme-toggle__icon--moon,
+  :root:not([data-theme="dark"]) .theme-toggle__icon--sun {
+    display: none;
   }
 
   /* ------------------------------------------------------------------
@@ -556,7 +555,10 @@
     grid-area: cta;
     display: grid;
     justify-items: start;
-    gap: var(--sp-3);
+    gap: var(--sp-4);
+  }
+  .hero__profiles {
+    --gap: var(--sp-5);
   }
   .hero__mol {
     grid-area: mol;
@@ -601,7 +603,6 @@
     align-items: center;
     gap: var(--sp-3);
     inline-size: 100%;
-    font-family: var(--font-mono);
     font-size: var(--text--2);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
@@ -725,8 +726,8 @@
     display: flex;
     align-items: center;
     gap: var(--sp-3);
-    font-family: var(--font-mono);
     font-size: var(--text--2);
+    font-weight: 600;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--ink-3);
@@ -758,6 +759,7 @@
   }
   .def-list > div {
     display: grid;
+    align-items: baseline; /* 文字サイズの違う dt と dd のベースラインを揃える */
     gap: var(--sp-1) var(--sp-6);
     padding-block: var(--sp-5);
     border-block-start: 1px solid var(--line);
@@ -766,12 +768,9 @@
     border-block-end: 1px solid var(--line);
   }
   .def-list dt {
-    font-family: var(--font-mono);
-    font-size: var(--text--2);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
+    font-size: var(--text--1);
+    font-weight: 600;
     color: var(--ink-3);
-    padding-block-start: 0.35em; /* 右側の本文と視覚的な高さを揃える */
   }
   .def-list dd {
     color: var(--ink-2);
@@ -793,14 +792,33 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-2);
     background: var(--surface);
-    transition:
-      border-color var(--dur-2) var(--ease),
-      box-shadow var(--dur-2) var(--ease);
+    transition: border-color var(--dur-2) var(--ease);
   }
   /* カード内のリンクにホバーしたらカード全体を反応させる（:has で子から親を判定） */
   .card:has(a:hover) {
     border-color: var(--line-2);
-    box-shadow: var(--shadow);
+  }
+
+  /* card--feature：画像＋説明の大きいカード。広い画面では2列に並べる */
+  .card__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .card--feature .card__shot {
+    inline-size: 100%;
+    margin-block: 0 var(--sp-5);
+  }
+  @media (min-width: 54rem) {
+    .card--feature {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      column-gap: var(--sp-6);
+      align-items: start;
+    }
+    .card--feature .card__shot {
+      margin-block-end: 0;
+    }
   }
 
   .card__head {
@@ -836,6 +854,13 @@
     font-size: var(--text--1);
     color: var(--ink-2);
   }
+  /* 本文の下に添える日付などの補足 */
+  .card__meta {
+    margin-block-start: var(--sp-2);
+    font-size: var(--text--2);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-3);
+  }
   /* margin-block-start: auto が「余った縦方向のスペース」をすべて footer の上に
      押し込むため、フッターがカード下端に貼り付く。
      grid-auto で横に並んだカードは同じ高さになるので、本文量が違っても
@@ -857,7 +882,6 @@
     border-radius: var(--radius-1);
     background: var(--surface-2);
     color: var(--ink-3);
-    font-family: var(--font-mono);
     font-size: var(--text--2);
     white-space: nowrap;
   }
@@ -894,27 +918,22 @@
   }
 
   /* ------------------------------------------------------------------
-     link-inline：外部リンク。末尾に矢印を付けて遷移することを示す。
+     link-inline：文中・カード内のリンク。色だけに頼らず下線でリンクと分かるようにし、
+     ホバー時は下線を本体の色まで濃くする。
+     color-mix(in oklch, A 40%, transparent) は「A を 40% の濃さにした色」
      ------------------------------------------------------------------ */
   .link-inline {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-2);
     font-size: var(--text--1);
     font-weight: 600;
-    text-decoration: none;
-    word-break: break-all; /* 長い URL でもカードからはみ出させない */
-  }
-  .link-inline::after {
-    content: "↗";
-    font-size: 0.9em;
-    transition: translate var(--dur-1) var(--ease);
+    text-decoration-line: underline;
+    text-decoration-color: color-mix(in oklch, currentColor 40%, transparent);
+    overflow-wrap: anywhere; /* 長い URL でもカードからはみ出させない */
+    transition:
+      color var(--dur-1) var(--ease),
+      text-decoration-color var(--dur-1) var(--ease);
   }
   .link-inline:hover {
-    text-decoration: underline;
-  }
-  .link-inline:hover::after {
-    translate: 2px -2px;
+    text-decoration-color: currentColor;
   }
 
   /* ------------------------------------------------------------------
@@ -976,7 +995,6 @@
   }
   .skill-group__en {
     flex: 1;
-    font-family: var(--font-mono);
     font-size: var(--text--2);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
@@ -995,10 +1013,6 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-2);
     background: var(--surface);
-    transition: border-color var(--dur-2) var(--ease);
-  }
-  .skill-card:hover {
-    border-color: var(--line-2);
   }
 
   /* アイコンは2行分にまたがって左端に置く */
@@ -1019,24 +1033,17 @@
     font-weight: 700;
     color: var(--ink);
   }
+  /* tabular-nums：数字を等幅にして、カード間で年号の幅を揃える */
   .skill-card__since {
-    font-family: var(--font-mono);
     font-size: var(--text--2);
+    font-variant-numeric: tabular-nums;
     color: var(--ink-3);
   }
   .skill-card__desc {
     grid-column: 2;
     margin-block-start: var(--sp-1);
     font-size: var(--text--1);
-    line-height: var(--leading-snug);
     color: var(--ink-2);
-  }
-  /* 説明の下に置く補足（学習中の注記など） */
-  .skill-card__note {
-    grid-column: 2;
-    margin-block-start: var(--sp-2);
-    font-size: var(--text--2);
-    color: var(--ink-3);
   }
 
   /* ------------------------------------------------------------------
@@ -1190,8 +1197,8 @@
     box-shadow: 0 0 0 4px var(--bg);
   }
   .timeline__date {
-    font-family: var(--font-mono);
     font-size: var(--text--2);
+    font-variant-numeric: tabular-nums;
     color: var(--ink-3);
     padding-block-start: 0.35em;
   }
@@ -1235,8 +1242,8 @@
     font-weight: 700;
   }
   .activity__period {
-    font-family: var(--font-mono);
     font-size: var(--text--2);
+    font-variant-numeric: tabular-nums;
     color: var(--ink-3);
   }
   .activity__body {
@@ -1245,15 +1252,10 @@
     font-size: var(--text--1);
     color: var(--ink-2);
   }
-  /* 見出しの中に置く補助リンク。h3 から継承する font-weight を戻し、
-     margin-inline-start でタイトル本体との間隔を確保する。 */
+  /* 見出しの中に置く補助リンク。margin-inline-start でタイトル本体との間隔を確保する */
   .activity__link {
-    margin-inline-start: var(--sp-4);
-    font-size: var(--text--2);
-    font-weight: 400;
-    letter-spacing: var(--tracking-wide);
-    color: var(--ink-3);
-    white-space: nowrap; /* 「HPはこちら ↗」が矢印の前で折り返さないように */
+    margin-inline-start: var(--sp-3);
+    white-space: nowrap; /* 「公式サイト」の途中で折り返さないように */
   }
 
   /* ------------------------------------------------------------------
@@ -1332,7 +1334,6 @@
   .site-header {
     position: static;
     background: none;
-    backdrop-filter: none;
   }
 
   /* タブは紙では切り替えられないので、全パネルを展開して見出しを補う */
